@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 5 - JS Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #4ade80;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #4ade80;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #fbbf24;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #0a2a0a;
+        border-left: 3px solid #22c55e;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #4ade80;
+        border: 1px solid #4ade80;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 5 - JS Interview</h1>
+    <p style="color: #888">Revision + Tricky Questions | 20 Questions</p>
+
+    <h2>Revision</h2>
+
+    <div class="q">
+      <span class="q-num">R1</span>
+      <p>Flatten this nested object!</p>
+      <pre>
+const nested = { a: 1, b: { c: 2, d: { e: 3, f: 4 } }, g: 5 };
+// Output: { a:1, "b.c":2, "b.d.e":3, "b.d.f":4, g:5 }</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const flatten = (nested, parent = "") => {
+  let obj = {};
+  for (const key in nested) {
+    const newKey = parent ? `${parent}.${key}` : key;
+    if (typeof nested[key] === "object") {
+      Object.assign(obj, flatten(nested[key], newKey));
+    } else obj[newKey] = nested[key];
+  }
+  return obj;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">R2</span>
+      <p>What are the 4 types of errors in JavaScript?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// 1. ReferenceError
+console.log(a); // a is not defined
+
+// 2. SyntaxError
+const b; // Missing initializer
+
+// 3. TypeError
+null.name; // Cannot read property of null
+
+// 4. RangeError
+new Array(-1); // Invalid array length</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">R3</span>
+      <p>Output?</p>
+      <pre>
+console.log(typeof null);
+console.log(typeof undefined);
+console.log(typeof NaN);
+console.log(typeof []);
+console.log(typeof function(){});</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"object"    // JS bug!
+"undefined"
+"number"    // JS quirk!
+"object"
+"function"</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 1 - Tricky Outputs</h2>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>Output?</p>
+      <pre>
+console.log(0 == false);
+console.log("" == false);
+console.log(null == undefined);
+console.log(null == false);
+console.log(NaN == NaN);</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+true   // 0 == 0
+true   // "" -> 0, false -> 0
+true   // special case!
+false  // null only equals null/undefined
+false  // NaN never equals anything!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>Output?</p>
+      <pre>
+const a = [1, 2, 3];
+const b = [1, 2, 3];
+const c = a;
+console.log(a == b);
+console.log(a === b);
+console.log(a == c);
+console.log(a === c);</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+false // different references
+false // different references
+true  // same reference
+true  // same reference</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>Output?</p>
+      <pre>
+function foo() { console.log(this); }
+const obj = { foo: foo }
+foo();
+obj.foo();
+new foo();</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+window object
+obj
+foo {} (new empty object)</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>Output?</p>
+      <pre>
+const obj = {
+  name: "Himanshu",
+  sayName: function() {
+    console.log(this.name);
+    const inner = function() {
+      console.log(this.name);
+    }
+    inner();
+  }
+}
+obj.sayName();</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"Himanshu"  // this = obj
+undefined   // inner() - this = window!
+// Fix: use arrow function for inner!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>Output?</p>
+      <pre>
+for(var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0);
+}
+for(let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0);
+}</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+3, 3, 3  // var - shared reference
+0, 1, 2  // let - new i each iteration</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>Output?</p>
+      <pre>
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve()
+  .then(() => console.log("3"))
+  .then(() => console.log("4"));
+setTimeout(() => console.log("5"), 0);
+Promise.resolve().then(() => console.log("6"));
+console.log("7");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer"><pre>1, 7, 3, 6, 4, 2, 5</pre></div>
+    </div>
+
+    <h2>Round 2 - Coding</h2>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>Find second largest number without sorting!</p>
+      <pre>const arr = [5, 2, 8, 1, 9, 3, 7]; // Output: 8</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const secondLargest = (arr) => {
+  let maxi = -Infinity;
+  let secondMaxi = -Infinity;
+  for (const val of arr) {
+    if (val > maxi) {
+      secondMaxi = maxi;
+      maxi = val;
+    } else if (val > secondMaxi && val !== maxi) {
+      secondMaxi = val;
+    }
+  }
+  return secondMaxi === -Infinity ? -1 : secondMaxi;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>Reverse words in a sentence!</p>
+      <pre>"Hello World How Are You" // Output: "You Are How World Hello"</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const reverseWords = (str) =>
+  str.split(" ").reverse().join(" ");</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>Find duplicate values!</p>
+      <pre>const arr = [1, 2, 3, 2, 4, 3, 5]; // Output: [2, 3]</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const duplicateValues = (arr) => {
+  let obj = {};
+  for (const val of arr) obj[val] = (obj[val] || 0) + 1;
+  let ans = [];
+  for (const key in obj) {
+    if (obj[key] > 1) ans.push(Number(key));
+  }
+  return ans;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>Chunk array into smaller arrays!</p>
+      <pre>chunk([1,2,3,4,5], 2); // [[1,2],[3,4],[5]]</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const chunk = (arr, size) => {
+  const result = [];
+  for (let i = 0; i < arr.length; i += size) {
+    result.push(arr.slice(i, i + size));
+  }
+  return result;
+};</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 3 - Mixed</h2>
+
+    <div class="q">
+      <span class="q-num">Q11</span>
+      <p>What is IIFE? Why is it used?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+(function() {
+  const secret = "private!";
+  console.log(secret);
+})();
+// Creates private scope — variables don't leak!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q12</span>
+      <p>Implement compose()!</p>
+      <pre>compose(addOne, double)(5); // 11</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const compose = (f, g) => x => f(g(x));
+// Right to left execution!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q13</span>
+      <p>Implement promisify()!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const promisify = (fn) => {
+  return function (...args) {
+    return new Promise((resolve, reject) => {
+      fn(...args, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+  };
+};</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 4 - Final Mixed</h2>
+
+    <div class="q">
+      <span class="q-num">Q14</span>
+      <p>Difference between const and Object.freeze()?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const obj = { name: "Himanshu" };
+obj.name = "Rahul"; // allowed!
+obj = {};           // ERROR!
+
+const obj2 = Object.freeze({ name: "Himanshu" });
+obj2.name = "Rahul"; // silently ignored!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q15</span>
+      <p>Implement deep clone without JSON!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const deepClone = (obj) => {
+  if (Array.isArray(obj)) {
+    return obj.map(item =>
+      typeof item === "object" ? deepClone(item) : item
+    );
+  }
+  let obj1 = {};
+  for (const [key, val] of Object.entries(obj)) {
+    if (typeof val === "object" && val !== null) {
+      obj1[key] = deepClone(val);
+    } else obj1[key] = val;
+  }
+  return obj1;
+};</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>

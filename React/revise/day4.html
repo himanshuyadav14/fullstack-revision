@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Interview — Day 4</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        line-height: 1.7;
+      }
+      .top-bar {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 16px 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-bar h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .top-bar p {
+        font-size: 13px;
+        color: #888;
+        margin-top: 2px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .round-header {
+        font-size: 13px;
+        font-weight: 700;
+        color: #818cf8;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .qa-card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .qa-header {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .qa-header:hover {
+        background: #222;
+      }
+      .q-num {
+        background: #4f46e5;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 3px;
+      }
+      .q-text {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 500;
+        flex: 1;
+      }
+      .icon {
+        color: #555;
+        font-size: 18px;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .qa-card.open .icon {
+        transform: rotate(180deg);
+      }
+      .qa-body {
+        display: none;
+        padding: 16px 20px 20px;
+        border-top: 1px solid #2a2a2a;
+      }
+      .qa-card.open .qa-body {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+      }
+      .sh {
+        background: #1e3a1e;
+        color: #4ade80;
+        border: 1px solid #2d5a2d;
+      }
+      .sm {
+        background: #3a2e00;
+        color: #fbbf24;
+        border: 1px solid #5a4500;
+      }
+      .sl {
+        background: #3a1a1a;
+        color: #f87171;
+        border: 1px solid #5a2a2a;
+      }
+      .lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 14px 0 6px;
+      }
+      .lc {
+        color: #4ade80;
+      }
+      .lw {
+        color: #fbbf24;
+      }
+      .la {
+        color: #818cf8;
+      }
+      .pt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 6px;
+        padding: 6px 10px;
+        border-left: 3px solid #2a2a2a;
+        background: #151515;
+        border-radius: 0 6px 6px 0;
+      }
+      .pt.g {
+        border-left-color: #4ade80;
+      }
+      .pt.w {
+        border-left-color: #fbbf24;
+      }
+      pre {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-size: 13px;
+        line-height: 1.7;
+        font-family: "Fira Code", monospace;
+      }
+      .kw {
+        color: #c084fc;
+      }
+      .fn {
+        color: #60a5fa;
+      }
+      .str {
+        color: #34d399;
+      }
+      .cm {
+        color: #4b5563;
+        font-style: italic;
+      }
+      .tg {
+        color: #f87171;
+      }
+      .txt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 8px;
+      }
+      .weak-box {
+        background: #1e1a00;
+        border: 1px solid #3a3000;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 32px;
+      }
+      .weak-box h3 {
+        color: #fbbf24;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+      }
+      .wi {
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 7px;
+        padding-left: 14px;
+        border-left: 2px solid #fbbf24;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin: 20px 0 32px;
+      }
+      .sc {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+      .sc .l {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .sc .v {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1>⚛️ React Interview — Day 4</h1>
+      <p>React Router · Redux Toolkit · Zustand · Async Actions</p>
+    </div>
+    <div class="container">
+      <div class="summary">
+        <div class="sc">
+          <div class="l">Round 1</div>
+          <div class="v">40/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 2</div>
+          <div class="v">34/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 3</div>
+          <div class="v">36/40</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 4</div>
+          <div class="v">45/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Total</div>
+          <div class="v">81.6%</div>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 1 ========== -->
+      <div class="round-header">
+        Round 1 — React Router Theory (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q1</span>
+          <span class="q-text">What is React Router? Why do we need it?</span>
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <div class="lbl la">Complete Answer</div>
+          <p class="txt">
+            React Router is a client-side routing library. Maps URLs to
+            components. Enables navigation without full page reloads using the
+            History API (window.history.pushState).
+          </p>
+          <pre><code><span class="cm">// Traditional routing — full page reload on every URL change</span>
+URL changes → GET request to server → server returns new HTML → full reload
+
+<span class="cm">// React Router — no server request</span>
+URL changes → JS intercepts → renders new component → instant, state preserved
+
+<span class="cm">// Three router types</span>
+BrowserRouter  <span class="cm">// History API — /about (99% of apps)</span>
+HashRouter     <span class="cm">// URL hash — /#/about (static hosting)</span>
+MemoryRouter   <span class="cm">// In memory — React Native / tests</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q2</span>
+          <span class="q-text"
+            >BrowserRouter vs HashRouter — refresh behavior?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// BrowserRouter — clean URLs, needs server config</span>
+URL: myapp.com/about
+Refresh → browser sends GET /about to server
+Server has no /about → 404 ❌
+Fix: configure server → return index.html for ALL routes
+<span class="cm">// Nginx: try_files $uri /index.html</span>
+
+<span class="cm">// HashRouter — hash URLs, no server config needed</span>
+URL: myapp.com/#/about
+Refresh → browser sends GET / (ignores everything after #)
+Server returns index.html ✅ → React Router reads #/about
+
+<span class="cm">// When to use each:</span>
+BrowserRouter  <span class="cm">// production apps with server config (default)</span>
+HashRouter     <span class="cm">// GitHub Pages, S3, static hosting without server config</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q3</span>
+          <span class="q-text"
+            >Core React Router v6 components — Routes, Route, Link, NavLink,
+            Navigate, Outlet</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 6.5/10</span>
+          <div class="lbl lw">Missed — NavLink and code examples</div>
+          <pre><code><span class="cm">// Complete setup</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;BrowserRouter&gt;</span>
+      <span class="tg">&lt;nav&gt;</span>
+        <span class="tg">&lt;Link</span> to=<span class="str">"/"</span><span class="tg">&gt;</span>Home<span class="tg">&lt;/Link&gt;</span>
+        <span class="cm">// NavLink — adds 'active' class automatically</span>
+        <span class="tg">&lt;NavLink</span> to=<span class="str">"/about"</span> className={({ isActive }) => isActive ? <span class="str">'active'</span> : <span class="str">''</span>}<span class="tg">&gt;</span>About<span class="tg">&lt;/NavLink&gt;</span>
+      <span class="tg">&lt;/nav&gt;</span>
+      <span class="tg">&lt;Routes&gt;</span>
+        <span class="tg">&lt;Route</span> path=<span class="str">"/"</span> element={<span class="tg">&lt;Home</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+        <span class="tg">&lt;Route</span> path=<span class="str">"/users/:id"</span> element={<span class="tg">&lt;UserProfile</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+        <span class="tg">&lt;Route</span> path=<span class="str">"*"</span> element={<span class="tg">&lt;NotFound</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;/Routes&gt;</span>
+    <span class="tg">&lt;/BrowserRouter&gt;</span>
+  )
+}
+
+<span class="cm">// Outlet — renders matched child route</span>
+<span class="tg">&lt;Route</span> path=<span class="str">"/dashboard"</span> element={<span class="tg">&lt;Dashboard</span> <span class="tg">/&gt;</span>}<span class="tg">&gt;</span>
+  <span class="tg">&lt;Route</span> path=<span class="str">"stats"</span> element={<span class="tg">&lt;Stats</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>   <span class="cm">// /dashboard/stats</span>
+<span class="tg">&lt;/Route&gt;</span>
+<span class="cm">// Inside Dashboard.jsx: &lt;Outlet /&gt; renders Stats here</span>
+
+<span class="cm">// Navigate — declarative redirect</span>
+<span class="kw">if</span> (loggedIn) <span class="kw">return</span> <span class="tg">&lt;Navigate</span> to=<span class="str">"/dashboard"</span> replace <span class="tg">/&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q4</span>
+          <span class="q-text"
+            >useNavigate + useParams + useLocation — real world use cases</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 6/10</span>
+          <div class="lbl lw">Always show code + real world context</div>
+          <pre><code><span class="cm">// useNavigate — programmatic navigation</span>
+<span class="kw">const</span> navigate = <span class="fn">useNavigate</span>()
+navigate(<span class="str">'/dashboard'</span>)           <span class="cm">// go to route</span>
+navigate(<span class="str">'/dashboard'</span>, { replace: <span class="kw">true</span> }) <span class="cm">// no back button</span>
+navigate(-<span class="str">1</span>)                     <span class="cm">// browser back</span>
+<span class="cm">// Use: after login, after form submit, after API success</span>
+
+<span class="cm">// useParams — read dynamic URL segments</span>
+<span class="cm">// Route: /users/:id</span>
+<span class="kw">const</span> { id } = <span class="fn">useParams</span>()  <span class="cm">// always STRING — convert: Number(id)</span>
+<span class="cm">// Use: product page, user profile, blog post by ID</span>
+
+<span class="cm">// useLocation — current URL info</span>
+<span class="kw">const</span> location = <span class="fn">useLocation</span>()
+<span class="cm">// { pathname: '/about', search: '?tab=reviews', hash: '#section', state: {} }</span>
+<span class="kw">const</span> tab = <span class="kw">new</span> <span class="fn">URLSearchParams</span>(location.search).<span class="fn">get</span>(<span class="str">'tab'</span>)
+<span class="kw">const</span> from = location.state?.from || <span class="str">'/dashboard'</span>  <span class="cm">// redirect back after login</span>
+<span class="cm">// Use: analytics tracking, read query params, redirect back pattern</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q5</span>
+          <span class="q-text"
+            >Protected Route — redirect to /login if not authenticated</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// ProtectedRoute.jsx — Outlet pattern</span>
+<span class="kw">const</span> <span class="fn">ProtectedRoute</span> = () => {
+  <span class="kw">const</span> { isAuthenticated } = <span class="fn">useContext</span>(AuthContext)
+  <span class="kw">const</span> location = <span class="fn">useLocation</span>()
+
+  <span class="kw">return</span> isAuthenticated
+    ? <span class="tg">&lt;Outlet</span> <span class="tg">/&gt;</span>
+    : <span class="tg">&lt;Navigate</span> to=<span class="str">"/login"</span> replace state={{ from: location.pathname }} <span class="tg">/&gt;</span>
+  <span class="cm">// replace — prevents back button loop</span>
+  <span class="cm">// state.from — login can redirect back after success</span>
+}
+
+<span class="cm">// App.jsx</span>
+<span class="tg">&lt;Routes&gt;</span>
+  <span class="tg">&lt;Route</span> path=<span class="str">"/login"</span> element={<span class="tg">&lt;Login</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+  <span class="tg">&lt;Route</span> element={<span class="tg">&lt;ProtectedRoute</span> <span class="tg">/&gt;</span>}<span class="tg">&gt;</span>
+    <span class="tg">&lt;Route</span> path=<span class="str">"/dashboard"</span> element={<span class="tg">&lt;Dashboard</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+  <span class="tg">&lt;/Route&gt;</span>
+<span class="tg">&lt;/Routes&gt;</span>
+
+<span class="cm">// Login.jsx — redirect back after login</span>
+<span class="kw">const</span> from = location.state?.from || <span class="str">'/dashboard'</span>
+<span class="fn">navigate</span>(from, { replace: <span class="kw">true</span> })</code></pre>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 2 ========== -->
+      <div class="round-header">
+        Round 2 — Redux/Zustand Theory (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q1</span>
+          <span class="q-text"
+            >What is Redux? Why was it created? Three core principles?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7/10</span>
+          <div class="lbl la">Three Redux Principles — Always Say These</div>
+          <pre><code><span class="cm">// 1. Single source of truth</span>
+<span class="cm">// Entire app state in ONE store</span>
+
+<span class="cm">// 2. State is read-only</span>
+<span class="cm">// Only way to change state is dispatch(action)</span>
+
+<span class="cm">// 3. Changes by pure reducers</span>
+reducer(currentState, action) = newState  <span class="cm">// no side effects</span>
+
+<span class="cm">// Redux data flow — always unidirectional</span>
+UI Event → dispatch(action) → reducer → new state → UI updates
+
+<span class="cm">// Context vs Redux</span>
+Context    <span class="cm">// convenience (no prop drilling), all consumers re-render</span>
+Redux      <span class="cm">// granular subscriptions, middleware, devtools, time-travel debug</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q2</span>
+          <span class="q-text"
+            >Redux data flow + complete RTK setup — action, reducer, store,
+            dispatch</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <pre><code><span class="cm">// counterSlice.js</span>
+<span class="kw">const</span> counterSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'counter'</span>,
+  initialState: { value: <span class="str">0</span> },
+  reducers: {
+    increment: state => { state.value += <span class="str">1</span> },  <span class="cm">// Immer handles immutability</span>
+    decrement: state => { state.value -= <span class="str">1</span> }
+  }
+})
+<span class="kw">export const</span> { increment, decrement } = counterSlice.actions
+<span class="kw">export default</span> counterSlice.reducer
+
+<span class="cm">// store.js</span>
+<span class="kw">export const</span> store = <span class="fn">configureStore</span>({ reducer: { counter: counterReducer } })
+
+<span class="cm">// main.jsx</span>
+<span class="tg">&lt;Provider</span> store={store}<span class="tg">&gt;</span><span class="tg">&lt;App</span> <span class="tg">/&gt;</span><span class="tg">&lt;/Provider&gt;</span>
+
+<span class="cm">// Component</span>
+<span class="kw">const</span> count = <span class="fn">useSelector</span>(state => state.counter.value)
+<span class="kw">const</span> dispatch = <span class="fn">useDispatch</span>()
+<span class="fn">dispatch</span>(<span class="fn">increment</span>())</code></pre>
+          <div class="lbl lw">Why RTK allows mutation syntax</div>
+          <div class="pt w">
+            RTK uses Immer — write mutating code, Immer creates new immutable
+            state behind the scenes
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q3</span>
+          <span class="q-text"
+            >useSelector performance — bad selector vs good selector</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7.5/10</span>
+          <pre><code><span class="cm">// ❌ Bad — new object every render → re-renders even if data unchanged</span>
+<span class="kw">const</span> user = <span class="fn">useSelector</span>(state => ({
+  name: state.user.name,
+  age: state.user.age
+}))  <span class="cm">// {} === {} → false → always re-renders</span>
+
+<span class="cm">// ✅ Fix 1 — select primitives separately</span>
+<span class="kw">const</span> name = <span class="fn">useSelector</span>(state => state.user.name)
+<span class="kw">const</span> age = <span class="fn">useSelector</span>(state => state.user.age)
+
+<span class="cm">// ✅ Fix 2 — createSelector (memoized)</span>
+<span class="kw">const</span> selectUser = <span class="fn">createSelector</span>(
+  state => state.user.name,
+  state => state.user.age,
+  (name, age) => ({ name, age })  <span class="cm">// only recreates when inputs change</span>
+)
+<span class="kw">const</span> user = <span class="fn">useSelector</span>(selectUser)
+
+<span class="cm">// ✅ Fix 3 — shallowEqual</span>
+<span class="kw">const</span> user = <span class="fn">useSelector</span>(
+  state => ({ name: state.user.name, age: state.user.age }),
+  shallowEqual  <span class="cm">// compares properties, not reference</span>
+)</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q4</span>
+          <span class="q-text"
+            >Zustand — what is it? Complete store + component</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// store.js — no Provider needed!</span>
+<span class="kw">export const</span> useCounterStore = <span class="fn">create</span>((set) => ({
+  count: <span class="str">0</span>,
+  increment: () => <span class="fn">set</span>(state => ({ count: state.count + <span class="str">1</span> })),
+  decrement: () => <span class="fn">set</span>(state => ({ count: state.count - <span class="str">1</span> }))
+}))
+
+<span class="cm">// Component — granular subscriptions</span>
+<span class="kw">const</span> count = <span class="fn">useCounterStore</span>(state => state.count)
+<span class="kw">const</span> increment = <span class="fn">useCounterStore</span>(state => state.increment)
+<span class="cm">// Only re-renders when count changes — not entire store</span></code></pre>
+          <div class="lbl lw">Key advantage over Redux</div>
+          <div class="pt w">
+            No Provider needed — just import and use anywhere
+          </div>
+          <div class="pt w">
+            Much less boilerplate — actions defined alongside state
+          </div>
+          <div class="pt w">
+            Granular subscriptions built-in without extra setup
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q5</span>
+          <span class="q-text"
+            >createAsyncThunk — async API call with pending/fulfilled/rejected
+            states</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sl">Score: 0/10 — Not attempted</span>
+          <div class="lbl lw">Complete Pattern — Memorize This</div>
+          <pre><code><span class="cm">// 1. Define async thunk</span>
+<span class="kw">export const</span> fetchUsers = <span class="fn">createAsyncThunk</span>(
+  <span class="str">'users/fetchUsers'</span>,
+  <span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users'</span>)
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>)
+    <span class="kw">return</span> res.<span class="fn">json</span>()  <span class="cm">// becomes action.payload on success</span>
+  }
+)
+
+<span class="cm">// 2. Handle 3 states in slice</span>
+<span class="kw">const</span> usersSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'users'</span>,
+  initialState: { data: [], loading: <span class="kw">false</span>, error: <span class="kw">null</span> },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .<span class="fn">addCase</span>(fetchUsers.pending, (state) => {
+        state.loading = <span class="kw">true</span>
+        state.error = <span class="kw">null</span>
+      })
+      .<span class="fn">addCase</span>(fetchUsers.fulfilled, (state, action) => {
+        state.loading = <span class="kw">false</span>
+        state.data = action.payload
+      })
+      .<span class="fn">addCase</span>(fetchUsers.rejected, (state, action) => {
+        state.loading = <span class="kw">false</span>
+        state.error = action.error.message
+      })
+  }
+})
+
+<span class="cm">// 3. Component</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">dispatch</span>(<span class="fn">fetchUsers</span>()) }, [dispatch])
+<span class="kw">const</span> { data, loading, error } = <span class="fn">useSelector</span>(state => state.users)</code></pre>
+          <div class="lbl lw">Three states generated automatically</div>
+          <div class="pt w">fetchUsers.pending → API call started</div>
+          <div class="pt w">
+            fetchUsers.fulfilled → success → action.payload = returned data
+          </div>
+          <div class="pt w">
+            fetchUsers.rejected → failed → action.error.message = error
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 3 ========== -->
+      <div class="round-header">Round 3 — Coding Problems (4 Questions)</div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q1</span>
+          <span class="q-text"
+            >Auth slice — login/logout with RTK + component</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// authSlice.js</span>
+<span class="kw">const</span> authSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'auth'</span>,
+  initialState: { user: <span class="kw">null</span>, isAuthenticated: <span class="kw">false</span> },
+  reducers: {
+    login: (state, action) => {
+      state.user = action.payload  <span class="cm">// payload IS the user object</span>
+      state.isAuthenticated = <span class="kw">true</span>
+    },
+    logout: (state) => {
+      state.user = <span class="kw">null</span>
+      state.isAuthenticated = <span class="kw">false</span>
+    }
+  }
+})
+<span class="kw">export const</span> { login, logout } = authSlice.actions
+
+<span class="cm">// Component</span>
+<span class="kw">const</span> isAuthenticated = <span class="fn">useSelector</span>(state => state.auth.isAuthenticated)
+<span class="kw">const</span> user = <span class="fn">useSelector</span>(state => state.auth.user)
+<span class="kw">const</span> dispatch = <span class="fn">useDispatch</span>()
+
+<span class="fn">dispatch</span>(<span class="fn">login</span>({ name: <span class="str">'Himanshu'</span> }))  <span class="cm">// pass only user data</span>
+<span class="fn">dispatch</span>(<span class="fn">logout</span>())</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q2</span>
+          <span class="q-text"
+            >Zustand todo store — add, toggle, remove, clearCompleted</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="kw">const</span> useTodoStore = <span class="fn">create</span>((set) => ({
+  todos: [],
+  addTodo: (text) => <span class="fn">set</span>(state => ({
+    todos: [...state.todos, { id: <span class="fn">Date.now</span>(), text, completed: <span class="kw">false</span> }]
+  })),
+  removeTodo: (id) => <span class="fn">set</span>(state => ({
+    todos: state.todos.<span class="fn">filter</span>(t => t.id !== id)
+  })),
+  toggleTodo: (id) => <span class="fn">set</span>(state => ({
+    todos: state.todos.<span class="fn">map</span>(t => t.id === id ? { ...t, completed: !t.completed } : t)
+  })),
+  clearCompleted: () => <span class="fn">set</span>(state => ({
+    todos: state.todos.<span class="fn">filter</span>(t => !t.completed)
+  }))
+}))</code></pre>
+          <div class="lbl lw">Mistakes to avoid</div>
+          <div class="pt w">
+            Match spec naming exactly — clearCompleted not clearTodos
+          </div>
+          <div class="pt w">
+            Don't put duplicate key props on nested elements
+          </div>
+          <div class="pt w">
+            addTodo should receive text string, build object inside store
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q3</span>
+          <span class="q-text"
+            >createAsyncThunk — fetch posts with loading/error/success</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8.5/10</span>
+          <pre><code><span class="cm">// postsSlice.js</span>
+<span class="kw">export const</span> fetchPosts = <span class="fn">createAsyncThunk</span>(
+  <span class="str">'posts/fetchPosts'</span>,
+  <span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/posts'</span>)
+    <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>)  <span class="cm">// ← always!</span>
+    <span class="kw">return</span> res.<span class="fn">json</span>()
+  }
+)
+
+<span class="kw">const</span> postsSlice = <span class="fn">createSlice</span>({
+  name: <span class="str">'posts'</span>,
+  initialState: { data: [], loading: <span class="kw">false</span>, error: <span class="kw">null</span> },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .<span class="fn">addCase</span>(fetchPosts.pending, (state) => {
+        state.loading = <span class="kw">true</span>
+        state.error = <span class="kw">null</span>  <span class="cm">// ← clear previous error</span>
+      })
+      .<span class="fn">addCase</span>(fetchPosts.fulfilled, (state, action) => {
+        state.loading = <span class="kw">false</span>
+        state.data = action.payload
+      })
+      .<span class="fn">addCase</span>(fetchPosts.rejected, (state, action) => {
+        state.loading = <span class="kw">false</span>
+        state.error = action.error.message
+      })
+  }
+})</code></pre>
+          <div class="lbl lw">Always remember</div>
+          <div class="pt w">
+            res.ok check — fetch doesn't throw on 404/500, must check manually
+          </div>
+          <div class="pt w">Clear error on pending — state.error = null</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q4</span>
+          <span class="q-text"
+            >React Router complete setup — nested routes, protected route,
+            404</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// main.jsx — createBrowserRouter config</span>
+<span class="kw">const</span> router = <span class="fn">createBrowserRouter</span>([
+  {
+    path: <span class="str">'/'</span>,
+    element: <span class="tg">&lt;App</span> <span class="tg">/&gt;</span>,  <span class="cm">// layout with Outlet</span>
+    children: [
+      { index: <span class="kw">true</span>, element: <span class="tg">&lt;Home</span> <span class="tg">/&gt;</span> },
+      {
+        path: <span class="str">'products'</span>,
+        element: <span class="tg">&lt;ProductsLayout</span> <span class="tg">/&gt;</span>,
+        children: [
+          { index: <span class="kw">true</span>, element: <span class="tg">&lt;Products</span> <span class="tg">/&gt;</span> },
+          { path: <span class="str">':id'</span>, element: <span class="tg">&lt;Product</span> <span class="tg">/&gt;</span> }
+        ]
+      },
+      {
+        path: <span class="str">'dashboard'</span>,
+        element: <span class="tg">&lt;ProtectedRoute&gt;&lt;Dashboard</span> <span class="tg">/&gt;&lt;/ProtectedRoute&gt;</span>
+      },
+      { path: <span class="str">'login'</span>, element: <span class="tg">&lt;Login</span> <span class="tg">/&gt;</span> }
+    ]
+  },
+  { path: <span class="str">'*'</span>, element: <span class="tg">&lt;NotFound</span> <span class="tg">/&gt;</span> }  <span class="cm">// 404</span>
+])</code></pre>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 4 ========== -->
+      <div class="round-header">
+        Round 4 — Mixed Theory + Coding + Tricky (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q1</span>
+          <span class="q-text"
+            >useNavigate vs Navigate component — when to use each?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8/10</span>
+          <pre><code><span class="cm">// useNavigate — imperative, inside event handlers/effects</span>
+<span class="kw">const</span> navigate = <span class="fn">useNavigate</span>()
+<span class="kw">const</span> handleSubmit = <span class="kw">async</span> () => {
+  <span class="kw">await</span> <span class="fn">loginUser</span>()
+  <span class="fn">navigate</span>(<span class="str">'/dashboard'</span>, { replace: <span class="kw">true</span> })
+}
+
+<span class="cm">// Navigate — declarative, during render based on condition</span>
+<span class="kw">if</span> (!isAuthenticated) <span class="kw">return</span> <span class="tg">&lt;Navigate</span> to=<span class="str">"/login"</span> replace <span class="tg">/&gt;</span>
+
+<span class="cm">// useNavigate outside component — ❌ throws error (it's a hook)</span>
+<span class="cm">// Workaround — pass navigate as argument</span>
+<span class="kw">function</span> <span class="fn">apiHelper</span>(navigate) { <span class="fn">navigate</span>(<span class="str">'/error'</span>) }
+<span class="kw">function</span> <span class="fn">MyComponent</span>() {
+  <span class="kw">const</span> navigate = <span class="fn">useNavigate</span>()
+  <span class="fn">apiHelper</span>(navigate)
+}</code></pre>
+          <div class="lbl lw">One line distinction</div>
+          <div class="pt w">
+            useNavigate = navigate as side effect (after something happens)
+          </div>
+          <div class="pt w">
+            Navigate = navigate as render outcome (based on current state)
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q2</span>
+          <span class="q-text"
+            >Redux slice with push/splice/find mutations — is this
+            correct?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <div class="lbl la">The Trap — Most People Get This Wrong</div>
+          <div class="pt g">
+            Code IS correct — RTK uses Immer, mutation syntax is intentional and
+            safe
+          </div>
+          <div class="pt g">
+            DON'T say "can't mutate state" — that's outdated plain Redux
+            thinking
+          </div>
+          <pre><code><span class="cm">// ✅ Valid in RTK — Immer handles immutability</span>
+state.users.<span class="fn">push</span>(action.payload)
+state.users.<span class="fn">splice</span>(index, <span class="str">1</span>)
+user.name = action.payload.name
+
+<span class="cm">// Real bugs — edge cases:</span>
+<span class="cm">// Bug 1: splice(-1) removes LAST element when findIndex returns -1</span>
+<span class="kw">const</span> index = state.users.<span class="fn">findIndex</span>(u => u.id === action.payload)
+<span class="kw">if</span> (index !== -<span class="str">1</span>) state.users.<span class="fn">splice</span>(index, <span class="str">1</span>)  <span class="cm">// ← guard required</span>
+
+<span class="cm">// Bug 2: user.name crashes if user not found</span>
+<span class="kw">const</span> user = state.users.<span class="fn">find</span>(u => u.id === action.payload.id)
+<span class="kw">if</span> (user) user.name = action.payload.name  <span class="cm">// ← guard required</span>
+
+<span class="cm">// Alternative deleteUser — cleaner, no index bug</span>
+state.users = state.users.<span class="fn">filter</span>(u => u.id !== action.payload)</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q3</span>
+          <span class="q-text"
+            >Plain Redux vs Redux Toolkit — side by side comparison</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7/10</span>
+          <pre><code><span class="cm">// ❌ Plain Redux — counter (lots of boilerplate)</span>
+<span class="kw">const</span> INCREMENT = <span class="str">'counter/increment'</span>
+<span class="kw">const</span> increment = () => ({ type: INCREMENT })
+<span class="kw">function</span> <span class="fn">reducer</span>(state = { value: <span class="str">0</span> }, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> INCREMENT: <span class="kw">return</span> { ...state, value: state.value + <span class="str">1</span> }
+    <span class="kw">default</span>: <span class="kw">return</span> state
+  }
+}
+<span class="kw">const</span> store = <span class="fn">createStore</span>(reducer)
+
+<span class="cm">// ✅ RTK — same counter (5x less code)</span>
+<span class="kw">const</span> slice = <span class="fn">createSlice</span>({
+  name: <span class="str">'counter'</span>,
+  initialState: { value: <span class="str">0</span> },
+  reducers: { increment: state => { state.value += <span class="str">1</span> } }
+})
+<span class="kw">const</span> store = <span class="fn">configureStore</span>({ reducer: slice.reducer })</code></pre>
+          <div class="lbl lw">RTK gives you</div>
+          <div class="pt w">createSlice — actions + reducer in one place</div>
+          <div class="pt w">
+            configureStore — DevTools + redux-thunk included by default
+          </div>
+          <div class="pt w">
+            Immer — write mutating code, get immutable updates
+          </div>
+          <div class="pt w">
+            createAsyncThunk — async with pending/fulfilled/rejected built in
+          </div>
+          <div class="pt w">
+            RTK is plain Redux with best practices built in — not a different
+            library
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q4</span>
+          <span class="q-text"
+            >Zustand — double: get().count * 2 is always 0 — why? Fix?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8.5/10</span>
+          <pre><code><span class="cm">// ❌ Problem — get() called ONCE at store initialization</span>
+<span class="kw">const</span> useStore = <span class="fn">create</span>((set, get) => ({
+  count: <span class="str">0</span>,
+  double: get().count * <span class="str">2</span>,  <span class="cm">// get().count = 0 forever</span>
+}))
+
+<span class="cm">// ✅ Fix 1 — getter function</span>
+getDouble: () => get().count * <span class="str">2</span>  <span class="cm">// fresh on every call</span>
+
+<span class="cm">// ✅ Fix 2 — derive in selector (preferred for simple values)</span>
+<span class="kw">const</span> double = <span class="fn">useStore</span>(state => state.count * <span class="str">2</span>)
+<span class="cm">// Zustand recomputes only when count changes</span>
+
+<span class="cm">// Rule: Don't store derived state in Zustand — compute in selectors</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q5</span>
+          <span class="q-text"
+            >Infinite loop bug — useEffect with users as dep + missing
+            useDispatch</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Bug 1 — infinite loop</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">dispatch</span>(<span class="fn">fetchUsers</span>())
+}, [users])  <span class="cm">// ❌ users is array — new ref on every fetch → infinite loop</span>
+
+<span class="cm">// Chain: mount → fetch → users updates (new array ref) → effect runs → fetch → ...</span>
+
+<span class="cm">// Bug 2 — dispatch not defined</span>
+<span class="cm">// Missing: const dispatch = useDispatch()</span>
+
+<span class="cm">// ✅ Fix</span>
+<span class="kw">const</span> dispatch = <span class="fn">useDispatch</span>()
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">dispatch</span>(<span class="fn">fetchUsers</span>())
+}, [dispatch])  <span class="cm">// dispatch is stable, fetch only on mount</span></code></pre>
+        </div>
+      </div>
+
+      <div class="weak-box">
+        <h3>Day 4 — Weak Areas to Revise</h3>
+        <div class="wi">
+          createAsyncThunk — practice full pattern: thunk + extraReducers +
+          component (wasn't attempted)
+        </div>
+        <div class="wi">
+          useSelector — always show createSelector fix in code, not just
+          describe it
+        </div>
+        <div class="wi">
+          Core Router components — NavLink, Outlet with nested routes — always
+          show code
+        </div>
+        <div class="wi">
+          useNavigate/useParams/useLocation — definitions alone = 6/10, always
+          show code + use case
+        </div>
+        <div class="wi">
+          Navigate with replace + state — always add these for auth redirects
+        </div>
+        <div class="wi">
+          Zustand derived state — compute in selector not in store
+        </div>
+        <div class="wi">
+          res.ok check — still recurring, make it automatic in every fetch
+        </div>
+      </div>
+    </div>
+    <script>
+      function toggle(h) {
+        h.parentElement.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

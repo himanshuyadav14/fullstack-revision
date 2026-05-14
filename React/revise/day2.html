@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Interview — Day 2</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        line-height: 1.7;
+      }
+      .header {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 20px 28px;
+      }
+      .header h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .header p {
+        color: #888;
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .round-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #0ea5e9;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 40px 0 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .card-header:hover {
+        background: #222;
+      }
+      .qnum {
+        background: #0ea5e9;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 5px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .qtxt {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 500;
+        flex: 1;
+      }
+      .arrow {
+        color: #555;
+        font-size: 16px;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+        margin-top: 2px;
+      }
+      .card.open .arrow {
+        transform: rotate(180deg);
+      }
+      .card-body {
+        display: none;
+        padding: 4px 20px 20px;
+        border-top: 1px solid #2a2a2a;
+      }
+      .card.open .card-body {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 12px 0 10px;
+      }
+      .s-high {
+        background: #1a3a1a;
+        color: #4ade80;
+        border: 1px solid #2a5a2a;
+      }
+      .s-mid {
+        background: #3a2e00;
+        color: #fbbf24;
+        border: 1px solid #5a4500;
+      }
+      .s-low {
+        background: #3a1a1a;
+        color: #f87171;
+        border: 1px solid #5a2a2a;
+      }
+      .lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 14px 0 6px;
+      }
+      .lbl-g {
+        color: #4ade80;
+      }
+      .lbl-w {
+        color: #fbbf24;
+      }
+      .lbl-b {
+        color: #0ea5e9;
+      }
+      .pt {
+        font-size: 14px;
+        color: #ccc;
+        padding: 5px 0 5px 14px;
+        border-left: 2px solid #333;
+        margin-bottom: 5px;
+      }
+      .pt-g {
+        border-left-color: #4ade80;
+      }
+      .pt-w {
+        border-left-color: #fbbf24;
+      }
+      .ans {
+        font-size: 14px;
+        color: #ccc;
+        margin: 8px 0;
+      }
+      pre {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: "Fira Code", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .kw {
+        color: #c084fc;
+      }
+      .fn {
+        color: #60a5fa;
+      }
+      .str {
+        color: #34d399;
+      }
+      .cm {
+        color: #555;
+        font-style: italic;
+      }
+      .tag {
+        color: #f87171;
+      }
+      .weak {
+        background: #1e1a00;
+        border: 1px solid #3a3000;
+        border-radius: 10px;
+        padding: 18px;
+        margin-top: 32px;
+      }
+      .weak h3 {
+        color: #fbbf24;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+      }
+      .wi {
+        font-size: 13px;
+        color: #ccc;
+        padding: 5px 0 5px 14px;
+        border-left: 2px solid #fbbf24;
+        margin-bottom: 6px;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .scard {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+      .scard .sl {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .scard .sv {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .star {
+        color: #fbbf24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>⚛️ React Interview — Day 2</h1>
+      <p>
+        useState + useEffect + useRef Deep Dive · Custom Hooks | 4 Rounds · 86%
+      </p>
+    </div>
+    <div class="container">
+      <div class="summary">
+        <div class="scard">
+          <div class="sl">Round 1</div>
+          <div class="sv">54/60</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 2</div>
+          <div class="sv">39/50</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 3</div>
+          <div class="sv">38.5/40</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 4</div>
+          <div class="sv">40.5/50</div>
+        </div>
+      </div>
+
+      <!-- ROUND 1 -->
+      <div class="round-title">Round 1 — Theory Fundamentals</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >Where does React store useState value? Why doesn't it reset on
+            re-render?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">8/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            State stored outside component in React's Fiber node (memoizedState)
+          </div>
+          <div class="pt pt-g">
+            Retrieved based on order of hooks on every render
+          </div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            Fiber stores hooks as a LINKED LIST — each hook = one node in the
+            list
+          </div>
+          <div class="pt pt-w">
+            WHY hook order matters — React has no names for hooks, identifies
+            purely by call order
+          </div>
+          <div class="pt pt-w">
+            Lazy initialization: useState(() => expensiveCalc()) — runs only
+            once
+          </div>
+          <pre><code><span class="cm">// Fiber node structure:</span>
+memoizedState (linked list)
+├── hook 1 → { value: <span class="str">0</span>, next → }        <span class="cm">// useState(0)</span>
+├── hook 2 → { value: <span class="str">'hello'</span>, next → }   <span class="cm">// useState('hello')</span>
+└── hook 3 → { value: <span class="kw">false</span>, next: null } <span class="cm">// useState(false)</span>
+
+<span class="cm">// ❌ Hook in condition — breaks order</span>
+<span class="kw">if</span> (loggedIn) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>) <span class="cm">// sometimes hook 1, sometimes skipped</span>
+}
+
+<span class="cm">// Rules of Hooks exist because of this linked list</span>
+<span class="cm">// Never: conditions, loops, nested functions</span>
+
+<span class="cm">// Lazy initialization:</span>
+<span class="kw">const</span> [data, setData] = <span class="fn">useState</span>(() => <span class="fn">expensiveCalc</span>()) <span class="cm">// fn called only once</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >setState(count+1) vs setState(prev => prev+1) — when does it
+            matter?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            A uses stale closure value, B uses latest queued value
+          </div>
+          <div class="pt pt-g">
+            Batching example — three calls with A give 1, with B give 3
+          </div>
+          <div class="lbl lbl-w">⚠️ Also Important — Async Functions</div>
+          <pre><code><span class="cm">// ❌ Stale in async — count captured before await</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = <span class="kw">async</span> () => {
+  <span class="kw">await</span> <span class="fn">apiCall</span>()
+  <span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// count is stale after await</span>
+}
+
+<span class="cm">// ✅ Always fresh with functional form</span>
+<span class="fn">setCount</span>(prev => prev + <span class="str">1</span>)
+
+<span class="cm">// RULE: if new state depends on previous → ALWAYS use functional form</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt">useRef — two use cases. What is it really?</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">8.5/10</div>
+          <div class="lbl lbl-b">✅ Three-Way Comparison — Know This Cold</div>
+          <pre><code>useState(<span class="str">0</span>)  <span class="cm">// persists across renders + triggers re-render ✅</span>
+<span class="fn">useRef</span>(<span class="str">0</span>)    <span class="cm">// persists across renders + NO re-render ✅</span>
+<span class="kw">let</span> x = <span class="str">0</span>    <span class="cm">// does NOT persist — resets every render ❌</span>
+
+<span class="cm">// useRef returns: { current: initialValue }</span>
+<span class="cm">// This object is created ONCE and lives for entire component lifetime</span>
+
+<span class="cm">// Use case 1 — persist value without re-render</span>
+<span class="kw">const</span> renderCount = <span class="fn">useRef</span>(<span class="str">0</span>)
+renderCount.current += <span class="str">1</span> <span class="cm">// mutate directly, no re-render</span>
+
+<span class="cm">// Use case 2 — access DOM element directly</span>
+<span class="kw">const</span> inputRef = <span class="fn">useRef</span>()
+<span class="tag">&lt;input</span> ref={inputRef} <span class="tag">/&gt;</span>
+inputRef.current.<span class="fn">focus</span>()
+
+<span class="cm">// ❌ Don't show ref value in JSX — won't update UI</span>
+<span class="kw">return</span> <span class="tag">&lt;p&gt;</span>{renderCount.current}<span class="tag">&lt;/p&gt;</span> <span class="cm">// changing .current won't trigger re-render</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >First click — what logs for state and ref? (setState is async, ref
+            is sync)</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">10/10</div>
+          <div class="lbl lbl-g">✅ Perfect Answer</div>
+          <pre><code><span class="kw">const</span> <span class="fn">handleClick</span> = () => {
+  <span class="fn">setCount</span>(count + <span class="str">1</span>)          <span class="cm">// async — updates after re-render</span>
+  ref.current = ref.current + <span class="str">1</span> <span class="cm">// sync — updates immediately</span>
+
+  console.<span class="fn">log</span>(<span class="str">'state:'</span>, count)       <span class="cm">// logs: 0 ← stale closure</span>
+  console.<span class="fn">log</span>(<span class="str">'ref:'</span>, ref.current)   <span class="cm">// logs: 1 ← synchronous</span>
+}
+
+<span class="cm">// Summary table:</span>
+<span class="cm">// useState  → persists + re-render + ASYNC</span>
+<span class="cm">// useRef    → persists + no re-render + SYNC</span>
+<span class="cm">// variable  → no persist + no re-render + sync</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >What is useEffect? What counts as a side effect? Why not in
+            component body?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9.5/10</div>
+          <div class="lbl lbl-g">✅ Excellent Answer</div>
+          <div class="pt pt-g">
+            Side effect = any operation that interacts with outside world
+          </div>
+          <div class="pt pt-g">
+            Component body must be pure — same input → same output, no side
+            effects
+          </div>
+          <div class="pt pt-g">
+            React may call component multiple times (Strict Mode does this
+            deliberately)
+          </div>
+          <pre><code><span class="cm">// 4 Side Effect Examples:</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">fetch</span>(<span class="str">'/api/data'</span>).<span class="fn">then</span>(...) }, [])   <span class="cm">// API call</span>
+<span class="fn">useEffect</span>(() => {
+  window.<span class="fn">addEventListener</span>(<span class="str">'resize'</span>, handler)
+  <span class="kw">return</span> () => window.<span class="fn">removeEventListener</span>(<span class="str">'resize'</span>, handler)
+}, [])                                                         <span class="cm">// Event listener</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => {}, <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id)
+}, [])                                                         <span class="cm">// Timer</span>
+<span class="fn">useEffect</span>(() => { document.title = <span class="str">'New Title'</span> }, [])       <span class="cm">// DOM manipulation</span>
+
+<span class="cm">// React phases:</span>
+<span class="cm">// Render phase  → pure calculation, may run multiple times</span>
+<span class="cm">// Commit phase  → React updates real DOM</span>
+<span class="cm">// useEffect     → runs after commit, safe for side effects</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q6</span>
+          <span class="qtxt"
+            >Stale closure in useEffect — setInterval always logs 0. Name +
+            fix.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">Named it: stale closure</div>
+          <div class="pt pt-g">
+            Explained: interval captures count=0 on first render, never updates
+          </div>
+          <div class="pt pt-g">
+            Both fixes mentioned: dependency array and useRef
+          </div>
+          <pre><code><span class="cm">// Fix 1 — dependency array (simpler, but interval restarts on each change)</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => console.<span class="fn">log</span>(<span class="str">'count:'</span>, count), <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id)
+}, [count])
+
+<span class="cm">// Fix 2 — useRef (BETTER — interval stays stable, always reads fresh)</span>
+<span class="kw">const</span> countRef = <span class="fn">useRef</span>(count)
+<span class="fn">useEffect</span>(() => { countRef.current = count }, [count])
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => console.<span class="fn">log</span>(<span class="str">'count:'</span>, countRef.current), <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id)
+}, []) <span class="cm">// interval never recreates</span></code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 2 -->
+      <div class="round-title">Round 2 — Theory + Output Questions</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >useEffect with no deps array — when does it run? Infinite loop?
+            Real use case?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7.5/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ You Missed Real Use Cases and the Infinite Loop Chain
+          </div>
+          <pre><code><span class="cm">// No array — runs after EVERY render</span>
+<span class="fn">useEffect</span>(() => { console.<span class="fn">log</span>(<span class="str">'rendered'</span>) })
+
+<span class="cm">// ❌ Infinite loop chain:</span>
+<span class="cm">// render → effect runs → setCount → re-render → effect runs → setCount → ...</span>
+<span class="fn">useEffect</span>(() => { <span class="fn">setData</span>(something) }) <span class="cm">// NEVER do this</span>
+
+<span class="cm">// Legitimate use cases for no deps array (rare):</span>
+<span class="cm">// 1. Debugging — log every render</span>
+<span class="cm">// 2. Sync with third-party library after every DOM change</span>
+<span class="cm">// 3. Measuring DOM dimensions after every render</span>
+
+<span class="cm">// Performance warning — runs after EVERY render</span>
+<span class="cm">// If component renders frequently → heavy operations run constantly</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >useEffect cleanup function — when exactly does it run? (Not just on
+            unmount)</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9.5/10</div>
+          <div class="lbl lbl-g">✅ Excellent Answer</div>
+          <pre><code><span class="fn">useEffect</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'effect:'</span>, count)
+  <span class="kw">return</span> () => console.<span class="fn">log</span>(<span class="str">'cleanup:'</span>, count)
+}, [count])
+
+<span class="cm">// Exact sequence (count starts at 0):</span>
+<span class="cm">// Mount:         "effect: 0"</span>
+<span class="cm">// count → 1:    "cleanup: 0" ← cleanup has OLD value</span>
+<span class="cm">//               "effect: 1"  ← new effect has NEW value</span>
+<span class="cm">// count → 2:    "cleanup: 1"</span>
+<span class="cm">//               "effect: 2"</span>
+<span class="cm">// Unmount:       "cleanup: 2" ← final cleanup</span>
+
+<span class="cm">// Cleanup runs in 2 situations:</span>
+<span class="cm">// 1. Before effect runs again (deps changed)</span>
+<span class="cm">// 2. When component unmounts</span>
+
+<span class="cm">// Real world — why this matters:</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> sub = <span class="fn">subscribe</span>(userId) <span class="cm">// subscribes to userId=1</span>
+  <span class="kw">return</span> () => <span class="fn">unsubscribe</span>(userId) <span class="cm">// cleanup removes userId=1</span>
+}, [userId])
+<span class="cm">// userId changes → cleanup removes old sub → effect adds new sub</span>
+<span class="cm">// Without cleanup → subscribed to BOTH userId=1 and userId=2 = memory leak</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >Click button 5 times — useEffect with []. How many times does
+            effect and cleanup log?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">Effect runs once (empty deps = mount only)</div>
+          <div class="pt pt-g">
+            Cleanup runs 0 times while mounted (clicking doesn't trigger it)
+          </div>
+          <div class="pt pt-g">
+            Strict Mode: effect → cleanup → effect in development
+          </div>
+          <pre><code><span class="cm">// Normal mode (production):</span>
+<span class="cm">// Mount:      "effect"    ← once</span>
+<span class="cm">// Click x5:   nothing     ← [] deps, no re-run</span>
+<span class="cm">// Unmount:    "cleanup"   ← once</span>
+
+<span class="cm">// Strict Mode (development):</span>
+<span class="cm">// Mount:      "effect"    ← first run</span>
+<span class="cm">//             "cleanup"   ← React unmounts intentionally</span>
+<span class="cm">//             "effect"    ← remounts to detect bugs</span>
+<span class="cm">// Click x5:   nothing</span>
+<span class="cm">// Unmount:    "cleanup"   ← final</span>
+
+<span class="cm">// WHY Strict Mode does this:</span>
+<span class="cm">// Catches effects that don't clean up properly</span>
+<span class="cm">// ONLY in development — production runs effects once</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt">useWindowWidth hook — find all 3 bugs</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6/10</div>
+          <div class="lbl lbl-w">⚠️ You Found 2/3 — Missed SSR Safety</div>
+          <div class="pt pt-w">
+            Bug 1: No cleanup — memory leak (event listener never removed)
+          </div>
+          <div class="pt pt-w">
+            Bug 2: Inline arrow function — removeEventListener can't match it
+            (you got this)
+          </div>
+          <div class="pt pt-w">
+            Bug 3 (missed): window.innerWidth in useState crashes in SSR
+            (Next.js)
+          </div>
+          <pre><code><span class="cm">// ✅ All 3 bugs fixed:</span>
+<span class="kw">function</span> <span class="fn">useWindowWidth</span>() {
+  <span class="kw">const</span> [width, setWidth] = <span class="fn">useState</span>(
+    <span class="kw">typeof</span> window !== <span class="str">'undefined'</span> ? window.innerWidth : <span class="str">0</span> <span class="cm">// Fix 3: SSR safe</span>
+  )
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">handleResize</span> = () => <span class="fn">setWidth</span>(window.innerWidth) <span class="cm">// Fix 2: named fn</span>
+
+    window.<span class="fn">addEventListener</span>(<span class="str">'resize'</span>, <span class="fn">handleResize</span>)
+    <span class="kw">return</span> () => window.<span class="fn">removeEventListener</span>(<span class="str">'resize'</span>, <span class="fn">handleResize</span>) <span class="cm">// Fix 1: cleanup</span>
+  }, [])
+
+  <span class="kw">return</span> width
+}
+
+<span class="cm">// SSR Safety Rule:</span>
+<span class="cm">// Whenever you use window, document, or localStorage</span>
+<span class="cm">// Always check: typeof window !== 'undefined'</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >useLayoutEffect vs useEffect — difference and when to use?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7/10</div>
+          <div class="lbl lbl-w">⚠️ Got Basic Idea But Missed Key Details</div>
+          <pre><code><span class="cm">// Exact timing:</span>
+<span class="cm">// useEffect:       Render → DOM update → Browser PAINTS → useEffect runs</span>
+<span class="cm">// useLayoutEffect: Render → DOM update → useLayoutEffect runs → Browser PAINTS</span>
+
+<span class="cm">// WHY it matters — preventing flicker:</span>
+<span class="kw">function</span> <span class="fn">Tooltip</span>() {
+  <span class="kw">const</span> [pos, setPos] = <span class="fn">useState</span>({ top: <span class="str">0</span> })
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>()
+
+  <span class="cm">// ❌ useEffect — browser paints FIRST at wrong position → flicker</span>
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> rect = ref.current.<span class="fn">getBoundingClientRect</span>()
+    <span class="fn">setPos</span>({ top: rect.bottom })
+  }, [])
+
+  <span class="cm">// ✅ useLayoutEffect — position calculated BEFORE paint → no flicker</span>
+  <span class="fn">useLayoutEffect</span>(() => {
+    <span class="kw">const</span> rect = ref.current.<span class="fn">getBoundingClientRect</span>()
+    <span class="fn">setPos</span>({ top: rect.bottom })
+  }, [])
+}
+
+<span class="cm">// WARNING: useLayoutEffect is SYNCHRONOUS</span>
+<span class="cm">// Heavy logic inside it freezes the UI</span>
+<span class="cm">// Also: throws warning in SSR (Next.js) — no DOM on server</span>
+
+<span class="cm">// RULE: Default to useEffect</span>
+<span class="cm">// Switch to useLayoutEffect ONLY when you see visual flickering</span></code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 3 -->
+      <div class="round-title">
+        Round 3 — Coding Problems
+        <span class="star">⭐ Your Strongest Round</span>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt">useFetch hook — complete production pattern</span>
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ Missed: res.ok check + reset state on URL change
+          </div>
+          <pre><code><span class="kw">export function</span> <span class="fn">useFetch</span>(url) {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>(<span class="kw">null</span>)
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> [error, setError] = <span class="fn">useState</span>(<span class="kw">null</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+
+    <span class="fn">setData</span>(<span class="kw">null</span>)   <span class="cm">// ← reset on URL change</span>
+    <span class="fn">setError</span>(<span class="kw">null</span>)
+    <span class="fn">setLoading</span>(<span class="kw">true</span>)
+
+    <span class="fn">fetch</span>(url, { signal: controller.signal })
+      .<span class="fn">then</span>(res => {
+        <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>) <span class="cm">// ← res.ok!</span>
+        <span class="kw">return</span> res.<span class="fn">json</span>()
+      })
+      .<span class="fn">then</span>(data => <span class="fn">setData</span>(data))
+      .<span class="fn">catch</span>(err => {
+        <span class="kw">if</span> (err.name === <span class="str">'AbortError'</span>) <span class="kw">return</span>
+        <span class="fn">setError</span>(err.message)
+      })
+      .<span class="fn">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+
+    <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+  }, [url])
+
+  <span class="kw">return</span> { data, loading, error }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >useLocalStorage hook — works exactly like useState but
+            persists</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9.5/10</div>
+          <div class="lbl lbl-w">⚠️ Minor: Add key to useEffect deps</div>
+          <pre><code><span class="kw">export function</span> <span class="fn">useLocalStorage</span>(key, initialValue) {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(() => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> stored = localStorage.<span class="fn">getItem</span>(key)
+      <span class="kw">return</span> stored !== <span class="kw">null</span> ? <span class="fn">JSON.parse</span>(stored) : initialValue
+    } <span class="kw">catch</span> {
+      <span class="kw">return</span> initialValue
+    }
+  })
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">try</span> {
+      <span class="kw">if</span> (value === <span class="kw">undefined</span> || value === <span class="kw">null</span>) {
+        localStorage.<span class="fn">removeItem</span>(key)
+      } <span class="kw">else</span> {
+        localStorage.<span class="fn">setItem</span>(key, <span class="fn">JSON.stringify</span>(value))
+      }
+    } <span class="kw">catch</span> (err) {
+      console.<span class="fn">error</span>(err)
+    }
+  }, [value, key]) <span class="cm">// ← key in deps!</span>
+
+  <span class="kw">return</span> [value, setValue]
+}</code></pre>
+          <div class="pt pt-g">
+            Lazy initializer ✅ | try/catch in both read/write ✅ | null check
+            ✅ | JSON.parse/stringify ✅
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >useDebounce hook — the cleanup IS the debounce mechanism</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">10/10</div>
+          <div class="lbl lbl-g">✅ Perfect — Know WHY it works</div>
+          <pre><code><span class="kw">export function</span> <span class="fn">useDebounce</span>(value, delay) {
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(value)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() => <span class="fn">setDebounced</span>(value), delay)
+    <span class="kw">return</span> () => <span class="fn">clearTimeout</span>(timer) <span class="cm">// ← THIS is the debounce</span>
+  }, [value, delay])
+
+  <span class="kw">return</span> debounced
+}
+
+<span class="cm">// HOW it works:</span>
+<span class="cm">// User types 'h'   → timer set for 500ms</span>
+<span class="cm">// User types 'he'  → cleanup cancels timer, new timer set</span>
+<span class="cm">// User types 'hel' → cleanup cancels timer, new timer set</span>
+<span class="cm">// User stops       → timer completes → debounced = 'hel'</span>
+<span class="cm">// clearTimeout on every keystroke = debounce</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >usePrevious hook — useEffect runs AFTER return so ref is always 1
+            render behind</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">10/10</div>
+          <div class="lbl lbl-g">✅ Perfect — Understand the Timing</div>
+          <pre><code><span class="kw">export function</span> <span class="fn">usePrevious</span>(value) {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>()
+  <span class="fn">useEffect</span>(() => {
+    ref.current = value <span class="cm">// runs AFTER return — so always one render behind</span>
+  }, [value])
+  <span class="kw">return</span> ref.current
+}
+
+<span class="cm">// Why it works:</span>
+<span class="cm">// Render 1: ref=undefined → returns undefined → effect → ref=0</span>
+<span class="cm">// Render 2: ref=0        → returns 0         → effect → ref=1</span>
+<span class="cm">// Render 3: ref=1        → returns 1         → effect → ref=2</span>
+<span class="cm">// ref.current is always the PREVIOUS render's value</span></code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 4 -->
+      <div class="round-title">Round 4 — Mixed Theory + Coding + Tricky</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >Rules of Hooks — list them and explain WHY each rule exists</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-b">✅ Two Rules + WHY</div>
+          <pre><code><span class="cm">// Rule 1: Only call hooks at top level</span>
+<span class="cm">// WHY: React tracks hooks by call order (linked list)</span>
+<span class="cm">// If order changes between renders → wrong state values</span>
+
+<span class="cm">// ❌ Breaks order</span>
+<span class="kw">if</span> (count > <span class="str">0</span>) {
+  <span class="kw">const</span> [name, setName] = <span class="fn">useState</span>(<span class="str">'Hi'</span>) <span class="cm">// sometimes hook 1, sometimes missing</span>
+}
+
+<span class="cm">// Rule 2: Only call hooks in React functions</span>
+<span class="cm">// WHY: Hooks need a Fiber node to store state</span>
+<span class="cm">// Regular functions have no Fiber → no storage location</span>
+
+<span class="cm">// ❌ Regular function — no Fiber attached</span>
+<span class="kw">function</span> <span class="fn">getData</span>() {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>(<span class="kw">null</span>) <span class="cm">// React can't store this anywhere</span>
+}
+
+<span class="cm">// ✅ Valid places for hooks:</span>
+<span class="cm">// 1. React functional components</span>
+<span class="cm">// 2. Custom hooks (functions starting with 'use')</span>
+
+<span class="cm">// The 'use' prefix matters — ESLint enforces hook rules inside 'use' functions</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >SearchPage — race condition when user types fast. Find and
+            fix.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ Identified Race Condition Correctly</div>
+          <div class="pt pt-w">
+            Also missed: index as key in results + res.ok check
+          </div>
+          <pre><code><span class="cm">// Race condition timeline:</span>
+<span class="cm">// User types 'r'   → Request 1 sent</span>
+<span class="cm">// User types 're'  → Request 2 sent</span>
+<span class="cm">// Request 2 resolves first → results = React results ✅</span>
+<span class="cm">// Request 1 resolves last  → results = R results ❌ OVERWRITES correct data</span>
+<span class="cm">// Last to RESOLVE wins, not last to SEND</span>
+
+<span class="cm">// ✅ Fix — AbortController cancels previous request</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">if</span> (!query) <span class="kw">return</span>
+  <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+
+  <span class="fn">fetch</span>(<span class="str">`/api/search?q=${query}`</span>, { signal: controller.signal })
+    .<span class="fn">then</span>(res => {
+      <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>()
+      <span class="kw">return</span> res.<span class="fn">json</span>()
+    })
+    .<span class="fn">then</span>(data => <span class="fn">setResults</span>(data.results))
+    .<span class="fn">catch</span>(err => {
+      <span class="kw">if</span> (err.name === <span class="str">'AbortError'</span>) <span class="kw">return</span>
+      <span class="fn">setError</span>(err.message)
+    })
+
+  <span class="kw">return</span> () => controller.<span class="fn">abort</span>() <span class="cm">// cancels previous on next query</span>
+}, [query])</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >useReducer — when to use over useState? Counter example.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7.5/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ Reducer must be defined OUTSIDE component
+          </div>
+          <pre><code><span class="cm">// ✅ Reducer OUTSIDE component (pure function, no need inside)</span>
+<span class="kw">function</span> <span class="fn">reducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'increment'</span>: <span class="kw">return</span> { count: state.count + <span class="str">1</span> }
+    <span class="kw">case</span> <span class="str">'decrement'</span>: <span class="kw">return</span> { count: state.count - <span class="str">1</span> }
+    <span class="kw">case</span> <span class="str">'reset'</span>:     <span class="kw">return</span> { count: <span class="str">0</span> }
+    <span class="kw">default</span>:          <span class="kw">return</span> state
+  }
+}
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, { count: <span class="str">0</span> })
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;p&gt;</span>{state.count}<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;button</span> onClick={() => <span class="fn">dispatch</span>({ type: <span class="str">'increment'</span> })}<span class="tag">&gt;</span>+<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;button</span> onClick={() => <span class="fn">dispatch</span>({ type: <span class="str">'reset'</span> })}<span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}
+
+<span class="cm">// Use useReducer when:</span>
+<span class="cm">// Multiple related state values</span>
+<span class="cm">// Complex state transitions</span>
+<span class="cm">// Many different actions modify same state</span>
+<span class="cm">// Actions can carry payload: dispatch({ type: 'increment', payload: 5 })</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >Tricky output — setCount twice + useEffect with [count] — what logs
+            after click?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-low">5/10</div>
+          <div class="lbl lbl-w">⚠️ You Didn't Answer the After-Click Part</div>
+          <pre><code><span class="cm">// Code:</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = () => {
+  <span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// both read stale count=0</span>
+  <span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// both are setCount(1)</span>
+}
+<span class="fn">useEffect</span>(() => { console.<span class="fn">log</span>(<span class="str">'count:'</span>, count) }, [count])
+
+<span class="cm">// On mount:     "count: 0"</span>
+<span class="cm">// After click:</span>
+<span class="cm">//   Both setCount(1) batched → ONE re-render with count=1</span>
+<span class="cm">//   Effect sees count changed (0→1) → runs ONCE → "count: 1"</span>
+<span class="cm">//   NOT "count: 1" twice — only ONE re-render happened</span>
+
+<span class="cm">// Key insight: React batches setState calls → one re-render → effect runs once</span>
+<span class="cm">// Regardless of how many setStates you call in one event handler</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >Combine useFetch + useDebounce — posts list with real-time
+            search</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9.5/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ Minor: Show input during loading, add "No results" state
+          </div>
+          <pre><code><span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> { data, loading, error } = <span class="fn">useFetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/posts'</span>)
+  <span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> debouncedSearch = <span class="fn">useDebounce</span>(search, 300)
+
+  <span class="kw">const</span> filtered = data?.<span class="fn">filter</span>(post =>
+    post.title.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(debouncedSearch.<span class="fn">toLowerCase</span>())
+  )
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;input</span> value={search} onChange={e => <span class="fn">setSearch</span>(e.target.value)} <span class="tag">/&gt;</span>
+      {loading && <span class="tag">&lt;p&gt;</span>Loading...<span class="tag">&lt;/p&gt;</span>}  <span class="cm">{/* ← show input during loading */}</span>
+      {error && <span class="tag">&lt;p&gt;</span>Error: {error}<span class="tag">&lt;/p&gt;</span>}
+      {!loading && filtered?.length === <span class="str">0</span> && <span class="tag">&lt;p&gt;</span>No results<span class="tag">&lt;/p&gt;</span>}
+      {filtered?.<span class="fn">map</span>(post => <span class="tag">&lt;div</span> key={post.id}<span class="tag">&gt;</span>{post.title}<span class="tag">&lt;/div&gt;</span>)}
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="weak">
+        <h3>🔥 Day 2 — All Weak Areas</h3>
+        <div class="wi">
+          res.ok check — make it AUTOMATIC in every single fetch call
+        </div>
+        <div class="wi">
+          Reset state (data/error/loading) when URL changes in useFetch
+        </div>
+        <div class="wi">
+          useLocalStorage — key must be in useEffect dependency array
+        </div>
+        <div class="wi">
+          useLayoutEffect — runs before paint, prevents flicker, sync = blocks
+          paint
+        </div>
+        <div class="wi">
+          SSR safety — typeof window !== 'undefined' before
+          window/localStorage/document
+        </div>
+        <div class="wi">
+          Batching + useEffect — multiple setState calls = one re-render =
+          effect runs once
+        </div>
+        <div class="wi">
+          Always show input OUTSIDE loading check for better UX
+        </div>
+      </div>
+    </div>
+    <script>
+      function t(h) {
+        h.parentElement.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

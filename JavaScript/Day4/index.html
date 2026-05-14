@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 4 - JS Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #fb923c;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #fb923c;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #fdba74;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #2a1000;
+        border-left: 3px solid #fb923c;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #fb923c;
+        border: 1px solid #fb923c;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 4 - JS Interview</h1>
+    <p style="color: #888">
+      Event Delegation + Design Patterns + JS Engine + Coding | 13 Questions
+    </p>
+
+    <h2>Round 1 - Event Delegation</h2>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>What is Event Bubbling? Output?</p>
+      <pre>
+// parent has click listener
+// child has click listener
+// When button clicked — what happens?</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Output: "Child clicked!" then "Parent clicked!"
+
+// Event Bubbling = event travels from child -> parent -> grandparent
+// This is DEFAULT behavior in JS!
+
+// Stop bubbling:
+e.stopPropagation(); // stops event from going up!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>What is Event Delegation? Implement it!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Event Delegation = attach ONE listener to parent
+// instead of listeners on each child
+// Uses event bubbling!
+
+document.getElementById("list")
+  .addEventListener("click", (e) => {
+    if (e.target.tagName === "LI") {
+      console.log("Clicked:", e.target.innerText);
+    }
+  });
+
+// Benefits:
+// Memory efficient (1 listener not 100)
+// Works for dynamically added elements!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>Difference between stopPropagation and preventDefault?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// stopPropagation — stops event BUBBLING up
+child.addEventListener("click", (e) => {
+  e.stopPropagation(); // parent won't fire!
+});
+
+// preventDefault — stops browser DEFAULT action
+form.addEventListener("submit", (e) => {
+  e.preventDefault(); // page won't reload!
+});
+
+link.addEventListener("click", (e) => {
+  e.preventDefault(); // page won't navigate!
+});</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 2 - Design Patterns</h2>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>What is Singleton Pattern? Implement it!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Singleton = only ONE instance throughout app!
+// Use case: database connection, logger, config
+
+const Singleton = (function() {
+  let instance;
+  function createInstance() {
+    return { name: "I am the only instance!" };
+  }
+  return {
+    getInstance: function() {
+      if (!instance) instance = createInstance();
+      return instance;
+    }
+  };
+})();
+
+const obj1 = Singleton.getInstance();
+const obj2 = Singleton.getInstance();
+console.log(obj1 === obj2); // true — same instance!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>What is Observer Pattern? Implement EventEmitter!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Observer = subscription system
+// Like YouTube — subscribe, get notified on new video!
+
+class EventEmitter {
+  constructor() { this.events = {}; }
+
+  on(event, callback) {
+    if (!this.events[event]) this.events[event] = [];
+    this.events[event].push(callback);
+  }
+
+  emit(event, data) {
+    if (this.events[event]) {
+      this.events[event].forEach(cb => cb(data));
+    }
+  }
+
+  off(event, callback) {
+    this.events[event] = this.events[event]
+      .filter(cb => cb !== callback);
+  }
+}
+
+const emitter = new EventEmitter();
+emitter.on("login", user => console.log(`${user} logged in!`));
+emitter.emit("login", "Himanshu"); // "Himanshu logged in!"</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 3 - JS Engine</h2>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>How does JavaScript Engine work internally?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// JS Engine = software written in C++ (V8 by Google)
+// Takes high level JS code -> machine code
+
+// 3 Phases:
+// 1. PARSING
+//    Code -> Tokenizer -> Tokens -> Parser -> AST
+
+// 2. COMPILATION (JIT)
+//    AST -> Interpreter -> Bytecode
+//    JIT Compiler optimizes hot code -> Machine Code
+
+// 3. EXECUTION
+//    Memory Heap — variables/objects stored here
+//    Call Stack — functions execute here (LIFO)
+//    Garbage Collector — Mark and Sweep algo
+//    removes unreachable objects from memory
+
+// Components: Call Stack, Memory Heap, Event Loop,
+// Microtask Queue, Macrotask Queue, Web APIs</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 4 - Coding Problems</h2>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>Get all elements with class "active" and change background!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const activeElements = document.getElementsByClassName("active");
+
+for (const el of activeElements) {
+  el.style.backgroundColor = "red";
+}
+
+// Or using Array.from for array methods:
+Array.from(activeElements).forEach(el => {
+  el.style.backgroundColor = "red";
+});</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>Flatten nested object!</p>
+      <pre>
+const nested = { a: 1, b: { c: 2, d: { e: 3 } } };
+// Output: { a:1, "b.c":2, "b.d.e":3 }</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const flattenObject = (obj, prefix = "") => {
+  let result = {};
+  for (const key in obj) {
+    const newKey = prefix ? `${prefix}.${key}` : key;
+    if (typeof obj[key] === "object" && obj[key] !== null) {
+      Object.assign(result, flattenObject(obj[key], newKey));
+    } else {
+      result[newKey] = obj[key];
+    }
+  }
+  return result;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>Implement leading debounce!</p>
+      <pre>
+// Executes IMMEDIATELY then ignores for delay time!
+debouncedFn(); // executes! ✅
+debouncedFn(); // ignored ❌
+debouncedFn(); // ignored ❌
+// 500ms later...
+debouncedFn(); // executes again! ✅</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const debounceLeading = (fn, delay) => {
+  let timer;
+  return function () {
+    if (!timer) fn(); // execute if no timer!
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null; // reset after delay
+    }, delay);
+  };
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>Implement retry failed promise N times!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const retry = async (fn, limit) => {
+  for (let i = 0; i < limit; i++) {
+    try {
+      const data = await fn();
+      return data; // success!
+    } catch (error) {
+      console.log(`Attempt ${i + 1} failed`);
+      if (i === limit - 1) throw new Error("All attempts failed");
+    }
+  }
+  throw new Error("Failed to fetch data");
+};
+
+retry(fetchData, 3)
+  .then(data => console.log("Success!", data))
+  .catch(err => console.log("Failed!", err));</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>

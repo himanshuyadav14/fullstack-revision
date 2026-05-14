@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Interview — Day 5</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        line-height: 1.7;
+      }
+      .top-bar {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 16px 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-bar h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .top-bar p {
+        font-size: 13px;
+        color: #888;
+        margin-top: 2px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .round-header {
+        font-size: 13px;
+        font-weight: 700;
+        color: #818cf8;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .qa-card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .qa-header {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .qa-header:hover {
+        background: #222;
+      }
+      .q-num {
+        background: #4f46e5;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 3px;
+      }
+      .q-text {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 500;
+        flex: 1;
+      }
+      .icon {
+        color: #555;
+        font-size: 18px;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .qa-card.open .icon {
+        transform: rotate(180deg);
+      }
+      .qa-body {
+        display: none;
+        padding: 16px 20px 20px;
+        border-top: 1px solid #2a2a2a;
+      }
+      .qa-card.open .qa-body {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+      }
+      .sh {
+        background: #1e3a1e;
+        color: #4ade80;
+        border: 1px solid #2d5a2d;
+      }
+      .sm {
+        background: #3a2e00;
+        color: #fbbf24;
+        border: 1px solid #5a4500;
+      }
+      .sl {
+        background: #3a1a1a;
+        color: #f87171;
+        border: 1px solid #5a2a2a;
+      }
+      .lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 14px 0 6px;
+      }
+      .lc {
+        color: #4ade80;
+      }
+      .lw {
+        color: #fbbf24;
+      }
+      .la {
+        color: #818cf8;
+      }
+      .pt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 6px;
+        padding: 6px 10px;
+        border-left: 3px solid #2a2a2a;
+        background: #151515;
+        border-radius: 0 6px 6px 0;
+      }
+      .pt.g {
+        border-left-color: #4ade80;
+      }
+      .pt.w {
+        border-left-color: #fbbf24;
+      }
+      pre {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-size: 13px;
+        line-height: 1.7;
+        font-family: "Fira Code", monospace;
+      }
+      .kw {
+        color: #c084fc;
+      }
+      .fn {
+        color: #60a5fa;
+      }
+      .str {
+        color: #34d399;
+      }
+      .cm {
+        color: #4b5563;
+        font-style: italic;
+      }
+      .tg {
+        color: #f87171;
+      }
+      .txt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 8px;
+      }
+      .weak-box {
+        background: #1e1a00;
+        border: 1px solid #3a3000;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 32px;
+      }
+      .weak-box h3 {
+        color: #fbbf24;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+      }
+      .wi {
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 7px;
+        padding-left: 14px;
+        border-left: 2px solid #fbbf24;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin: 20px 0 32px;
+      }
+      .sc {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+      .sc .l {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .sc .v {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1>⚛️ React Interview — Day 5</h1>
+      <p>
+        Performance · React.memo · Lazy Loading · Code Splitting · Web Vitals
+      </p>
+    </div>
+    <div class="container">
+      <div class="summary">
+        <div class="sc">
+          <div class="l">Round 1</div>
+          <div class="v">42.5/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 2</div>
+          <div class="v">44.5/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 3</div>
+          <div class="v">28.5/30</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 4</div>
+          <div class="v">43/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Total</div>
+          <div class="v">88%</div>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 1 ========== -->
+      <div class="round-header">
+        Round 1 — Theory Fundamentals (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q1</span>
+          <span class="q-text"
+            >What makes a React app slow? Complete list.</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Complete list of React performance killers</span>
+1. Unnecessary re-renders     <span class="cm">// Fix: React.memo, useMemo, useCallback</span>
+2. Large bundle size          <span class="cm">// Fix: code splitting, React.lazy, tree shaking</span>
+3. Heavy computations         <span class="cm">// Fix: useMemo, move outside render</span>
+4. Poor state management      <span class="cm">// Fix: split state, use selectors</span>
+5. Memory leaks               <span class="cm">// Fix: cleanup in useEffect</span>
+6. Inline functions/objects   <span class="cm">// Fix: useCallback, useMemo</span>
+7. Large lists (10k+ items)   <span class="cm">// Fix: react-window, react-virtuoso</span>
+8. No API caching             <span class="cm">// Fix: React Query, SWR</span>
+9. Images not lazy loaded     <span class="cm">// Fix: loading="lazy"</span>
+10. Too many useEffect chains <span class="cm">// Fix: consolidate effects</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q2</span>
+          <span class="q-text"
+            >Code splitting — what is it? Static vs dynamic imports?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// Static import — in main bundle, loads immediately</span>
+<span class="kw">import</span> Dashboard <span class="kw">from</span> <span class="str">'./Dashboard'</span>
+
+<span class="cm">// Dynamic import — separate chunk, loads on demand</span>
+<span class="kw">const</span> Dashboard = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Dashboard'</span>))
+
+<span class="cm">// Route-based splitting — most impactful pattern</span>
+<span class="kw">const</span> Home = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./pages/Home'</span>))
+<span class="kw">const</span> Dashboard = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./pages/Dashboard'</span>))
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;Suspense</span> fallback={<span class="tg">&lt;PageSkeleton</span> <span class="tg">/&gt;</span>}<span class="tg">&gt;</span>
+      <span class="tg">&lt;Routes&gt;</span>
+        <span class="tg">&lt;Route</span> path=<span class="str">"/"</span> element={<span class="tg">&lt;Home</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+        <span class="tg">&lt;Route</span> path=<span class="str">"/dashboard"</span> element={<span class="tg">&lt;Dashboard</span> <span class="tg">/&gt;</span>} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;/Routes&gt;</span>
+    <span class="tg">&lt;/Suspense&gt;</span>
+  )
+}
+
+<span class="cm">// React.lazy only works with DEFAULT exports</span>
+<span class="cm">// Named export workaround:</span>
+React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./utils'</span>).<span class="fn">then</span>(m => ({ <span class="kw">default</span>: m.NamedComponent })))</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q3</span>
+          <span class="q-text"
+            >React.memo — internals, when it helps, when it doesn't</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7.5/10</span>
+          <div class="lbl lw">How it works internally</div>
+          <pre><code><span class="cm">// Before re-render, React.memo does:</span>
+Object.keys(props).<span class="fn">every</span>(key => Object.<span class="fn">is</span>(prevProps[key], nextProps[key]))
+<span class="cm">// true → skip re-render (return cached output)</span>
+<span class="cm">// false → re-render</span>
+
+<span class="cm">// ❌ Fails — new references every render</span>
+<span class="tg">&lt;Child</span> style={{ color: <span class="str">'red'</span> }} <span class="tg">/&gt;</span>       <span class="cm">// new object</span>
+<span class="tg">&lt;Child</span> onClick={() => <span class="fn">handle</span>()} <span class="tg">/&gt;</span>  <span class="cm">// new function</span>
+<span class="tg">&lt;Child</span> items={[<span class="str">1</span>,<span class="str">2</span>,<span class="str">3</span>]} <span class="tg">/&gt;</span>           <span class="cm">// new array</span>
+
+<span class="cm">// ✅ Works — primitives or stable references</span>
+<span class="tg">&lt;Child</span> count={<span class="str">5</span>} label=<span class="str">"hello"</span> <span class="tg">/&gt;</span>
+<span class="tg">&lt;Child</span> onClick={<span class="fn">useCallback</span>(() => {}, [])} <span class="tg">/&gt;</span>
+
+<span class="cm">// Context bypasses React.memo!</span>
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(() => {
+  <span class="kw">const</span> theme = <span class="fn">useContext</span>(ThemeContext) <span class="cm">// context change → re-renders regardless</span>
+})
+
+<span class="cm">// Custom comparator</span>
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(Component, (prev, next) =>
+  prev.user.id === next.user.id  <span class="cm">// true=skip, false=re-render</span>
+)</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q4</span>
+          <span class="q-text"
+            >Virtualization / windowing — why needed? Libraries?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8/10</span>
+          <pre><code><span class="cm">// Problem: 10,000 items = 10,000 DOM nodes = slow</span>
+<span class="cm">// Solution: only render ~20 visible items at any time</span>
+
+<span class="cm">// 3 Libraries to know:</span>
+
+<span class="cm">// 1. react-window — lightweight, most popular</span>
+<span class="kw">import</span> { FixedSizeList } <span class="kw">from</span> <span class="str">'react-window'</span>
+<span class="tg">&lt;FixedSizeList</span> height={<span class="str">400</span>} itemCount={<span class="str">10000</span>} itemSize={<span class="str">50</span>} width={<span class="str">300</span>}<span class="tg">&gt;</span>
+  {({ index, style }) => <span class="tg">&lt;div</span> style={style}<span class="tg">&gt;</span>{items[index]}<span class="tg">&lt;/div&gt;</span>}
+<span class="tg">&lt;/FixedSizeList&gt;</span>
+
+<span class="cm">// 2. @tanstack/react-virtual — modern, flexible</span>
+<span class="kw">import</span> { useVirtualizer } <span class="kw">from</span> <span class="str">'@tanstack/react-virtual'</span>
+
+<span class="cm">// 3. react-virtuoso — most features, variable height, grouping</span>
+<span class="tg">&lt;Virtuoso</span> data={items} itemContent={(i, item) => <span class="tg">&lt;div&gt;</span>{item}<span class="tg">&lt;/div&gt;</span>} style={{ height: <span class="str">400</span> }} <span class="tg">/&gt;</span>
+
+<span class="cm">// When to use:</span>
+<span class="cm">// &lt; 100 items → regular map is fine</span>
+<span class="cm">// &gt; 500 items → consider virtualization</span>
+<span class="cm">// &gt; 1000 items → virtualization required</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q5</span>
+          <span class="q-text"
+            >Lazy loading images — why? How? Native vs Intersection
+            Observer</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8.5/10</span>
+          <pre><code><span class="cm">// Method 1 — Native (use by default for all below-fold images)</span>
+<span class="tg">&lt;img</span> src=<span class="str">"photo.jpg"</span> loading=<span class="str">"lazy"</span> alt=<span class="str">"photo"</span> <span class="tg">/&gt;</span>
+
+<span class="cm">// ❌ Don't lazy load above-fold images — hurts LCP</span>
+<span class="tg">&lt;img</span> src=<span class="str">"hero.jpg"</span> loading=<span class="str">"lazy"</span> <span class="tg">/&gt;</span>  <span class="cm">// ❌ hero is immediately visible</span>
+<span class="tg">&lt;img</span> src=<span class="str">"hero.jpg"</span> loading=<span class="str">"eager"</span> <span class="tg">/&gt;</span> <span class="cm">// ✅</span>
+
+<span class="cm">// Method 2 — Intersection Observer (custom control, fade-in, analytics)</span>
+<span class="kw">function</span> <span class="fn">LazyImage</span>({ src, alt }) {
+  <span class="kw">const</span> [loaded, setLoaded] = <span class="fn">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> imgRef = <span class="fn">useRef</span>()
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> observer = <span class="kw">new</span> <span class="fn">IntersectionObserver</span>(([entry]) => {
+      <span class="kw">if</span> (entry.isIntersecting) {
+        <span class="fn">setLoaded</span>(<span class="kw">true</span>)
+        observer.<span class="fn">disconnect</span>()
+      }
+    }, { threshold: <span class="str">0.1</span> })
+    <span class="kw">if</span> (imgRef.current) observer.<span class="fn">observe</span>(imgRef.current)
+    <span class="kw">return</span> () => observer.<span class="fn">disconnect</span>()
+  }, [])
+
+  <span class="kw">return</span> <span class="tg">&lt;img</span> ref={imgRef} src={loaded ? src : <span class="kw">undefined</span>} alt={alt} <span class="tg">/&gt;</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 2 ========== -->
+      <div class="round-header">
+        Round 2 — Theory + Output Questions (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q1</span>
+          <span class="q-text"
+            >ProductList — find ALL performance issues (4+)</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Problem 1 — filter runs on every render</span>
+<span class="cm">// Fix: useMemo</span>
+<span class="kw">const</span> filtered = <span class="fn">useMemo</span>(() => {
+  <span class="kw">const</span> lower = search.<span class="fn">toLowerCase</span>() <span class="cm">// cache outside filter</span>
+  <span class="kw">return</span> products.<span class="fn">filter</span>(p => p.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(lower))
+}, [products, search])
+
+<span class="cm">// Problem 2 — new handleSearch function every render</span>
+<span class="cm">// Fix: useCallback</span>
+<span class="kw">const</span> handleSearch = <span class="fn">useCallback</span>((e) => <span class="fn">setSearch</span>(e.target.value), [])
+
+<span class="cm">// Problem 3 — ProductCard re-renders unnecessarily</span>
+<span class="cm">// Fix: React.memo</span>
+<span class="kw">const</span> ProductCard = React.<span class="fn">memo</span>(({ product, category }) => { ... })
+
+<span class="cm">// Problem 4 — unnecessary category prop</span>
+<span class="cm">// Fix: remove if ProductCard doesn't need it</span>
+<span class="tg">&lt;ProductCard</span> product={p} <span class="tg">/&gt;</span>  <span class="cm">// not category={category}</span>
+
+<span class="cm">// Problem 5 — no AbortController, no res.ok</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+  <span class="fn">fetch</span>(`/api/products?category=${category}`, { signal: controller.signal })
+    .<span class="fn">then</span>(res => {
+      <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>)
+      <span class="kw">return</span> res.<span class="fn">json</span>()
+    })
+    .<span class="fn">then</span>(data => <span class="fn">setProducts</span>(data))
+    .<span class="fn">catch</span>(err => { <span class="kw">if</span> (err.name !== <span class="str">'AbortError'</span>) console.<span class="fn">error</span>(err) })
+  <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+}, [category])</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q2</span>
+          <span class="q-text"
+            >Reconciliation — what is it? Two key assumptions of diffing
+            algorithm?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8.5/10</span>
+          <pre><code><span class="cm">// Reconciliation: compare old vs new Virtual DOM → minimal real DOM updates</span>
+
+<span class="cm">// Assumption 1 — different element type = destroy and rebuild</span>
+<span class="cm">// Old: &lt;div&gt;&lt;Counter /&gt;&lt;/div&gt;</span>
+<span class="cm">// New: &lt;span&gt;&lt;Counter /&gt;&lt;/span&gt;</span>
+<span class="cm">// React sees div→span → unmounts Counter (loses state) → remounts fresh</span>
+
+<span class="cm">// Assumption 2 — keys identify stable list elements</span>
+<span class="cm">// Without keys — React diffs by position → updates ALL items</span>
+<span class="tg">&lt;li</span> key=<span class="str">"apple"</span><span class="tg">&gt;</span>Apple<span class="tg">&lt;/li&gt;</span>  <span class="cm">// With keys — React reuses DOM node for same key</span>
+
+<span class="cm">// Algorithm complexity:</span>
+<span class="cm">// Naive: O(n³) — too slow</span>
+<span class="cm">// React: O(n) — achieved via the two assumptions</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q3</span>
+          <span class="q-text"
+            >Core Web Vitals — LCP, INP, CLS + how React affects each</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <pre><code><span class="cm">// LCP — Largest Contentful Paint (loading speed)</span>
+<span class="cm">// Good: &lt; 2.5s | Poor: &gt; 4s</span>
+<span class="cm">// React impact: large bundle delays LCP</span>
+<span class="cm">// Fix: code splitting, React.lazy</span>
+
+<span class="cm">// INP — Interaction to Next Paint (responsiveness)</span>
+<span class="cm">// Good: &lt; 200ms | Poor: &gt; 500ms</span>
+<span class="cm">// React impact: heavy re-renders cause input lag</span>
+<span class="cm">// Fix: useMemo, debouncing, useDeferredValue</span>
+
+<span class="cm">// CLS — Cumulative Layout Shift (visual stability)</span>
+<span class="cm">// Good: &lt; 0.1 | Poor: &gt; 0.25</span>
+<span class="cm">// React impact: conditional rendering without reserved space</span>
+<span class="tg">&lt;div</span> style={{ height: <span class="str">200</span> }}<span class="tg">&gt;</span>  <span class="cm">// reserve space</span>
+  {isLoaded ? <span class="tg">&lt;Image</span> <span class="tg">/&gt;</span> : <span class="tg">&lt;Skeleton</span> <span class="tg">/&gt;</span>}
+<span class="tg">&lt;/div&gt;</span>
+
+<span class="cm">// Measure in code</span>
+<span class="kw">import</span> { onLCP, onINP, onCLS } <span class="kw">from</span> <span class="str">'web-vitals'</span>
+<span class="fn">onLCP</span>(console.log); <span class="fn">onINP</span>(console.log); <span class="fn">onCLS</span>(console.log)</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q4</span>
+          <span class="q-text"
+            >Tree shaking — how it works, what you must do</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7.5/10</span>
+          <pre><code><span class="cm">// Tree shaking removes unused code from bundle</span>
+<span class="cm">// Works via static analysis of ES module imports/exports</span>
+
+<span class="cm">// ✅ ES modules — tree shakeable</span>
+<span class="kw">import</span> { add } <span class="kw">from</span> <span class="str">'./utils'</span>  <span class="cm">// only add in bundle</span>
+
+<span class="cm">// ❌ CommonJS — NOT tree shakeable</span>
+<span class="kw">const</span> { add } = <span class="fn">require</span>(<span class="str">'./utils'</span>)  <span class="cm">// entire module included</span>
+
+<span class="cm">// ❌ Namespace import — NOT tree shakeable</span>
+<span class="kw">import</span> _ <span class="kw">from</span> <span class="str">'lodash'</span>        <span class="cm">// entire lodash ~70KB</span>
+<span class="kw">import</span> * <span class="kw">as</span> _ <span class="kw">from</span> <span class="str">'lodash'</span>   <span class="cm">// same problem</span>
+
+<span class="cm">// ✅ Named import — tree shakeable</span>
+<span class="kw">import</span> { debounce } <span class="kw">from</span> <span class="str">'lodash-es'</span>  <span class="cm">// only debounce ~2KB</span>
+
+<span class="cm">// Real world impact</span>
+<span class="kw">import</span> moment <span class="kw">from</span> <span class="str">'moment'</span>         <span class="cm">// ❌ 232KB</span>
+<span class="kw">import</span> { format } <span class="kw">from</span> <span class="str">'date-fns'</span>   <span class="cm">// ✅ ~2KB</span>
+
+<span class="cm">// package.json — tell bundler no side effects</span>
+<span class="cm">// { "sideEffects": false }</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q5</span>
+          <span class="q-text"
+            >Debouncing in React — search input with 500ms delay</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// Best approach — use your useDebounce hook from Day 2</span>
+<span class="kw">function</span> <span class="fn">Search</span>() {
+  <span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> [results, setResults] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>)
+  <span class="kw">const</span> debouncedQuery = <span class="fn">useDebounce</span>(query, <span class="str">500</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">if</span> (!debouncedQuery) { <span class="fn">setResults</span>([]); <span class="kw">return</span> }
+
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+    <span class="fn">setLoading</span>(<span class="kw">true</span>)
+
+    <span class="fn">fetch</span>(`/api/search?q=${debouncedQuery}`, { signal: controller.signal })
+      .<span class="fn">then</span>(res => {
+        <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>)
+        <span class="kw">return</span> res.<span class="fn">json</span>()
+      })
+      .<span class="fn">then</span>(data => <span class="fn">setResults</span>(data))
+      .<span class="fn">catch</span>(err => { <span class="kw">if</span> (err.name !== <span class="str">'AbortError'</span>) console.<span class="fn">error</span>(err) })
+      .<span class="fn">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+
+    <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+  }, [debouncedQuery])
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;div&gt;</span>
+      <span class="tg">&lt;input</span> value={query} onChange={e => <span class="fn">setQuery</span>(e.target.value)} placeholder=<span class="str">"Search..."</span> <span class="tg">/&gt;</span>
+      {loading && <span class="tg">&lt;p&gt;</span>Searching...<span class="tg">&lt;/p&gt;</span>}
+      <span class="tg">&lt;ul&gt;</span>{results.<span class="fn">map</span>(item => <span class="tg">&lt;li</span> key={item.id}<span class="tg">&gt;</span>{item.name}<span class="tg">&lt;/li&gt;</span>)}<span class="tg">&lt;/ul&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 3 ========== -->
+      <div class="round-header">Round 3 — Coding Problems (3 Questions)</div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q1</span>
+          <span class="q-text"
+            >UserList 10,000 items — apply ALL optimizations</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <pre><code><span class="kw">const</span> UserCard = React.<span class="fn">memo</span>(({ user, onSelect }) => (  <span class="cm">// React.memo</span>
+  <span class="tg">&lt;div</span> onClick={() => <span class="fn">onSelect</span>(user)}<span class="tg">&gt;</span><span class="tg">&lt;p&gt;</span>{user.name}<span class="tg">&lt;/p&gt;</span><span class="tg">&lt;/div&gt;</span>
+))
+
+<span class="kw">function</span> <span class="fn">UserList</span>({ onSelectUser }) {
+  <span class="kw">const</span> [users, setUsers] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> debouncedQuery = <span class="fn">useDebounce</span>(search, <span class="str">500</span>)  <span class="cm">// debounce</span>
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+    <span class="fn">fetch</span>(<span class="str">'/api/users'</span>, { signal: controller.signal })
+      .<span class="fn">then</span>(res => { <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(); <span class="kw">return</span> res.<span class="fn">json</span>() })
+      .<span class="fn">then</span>(data => <span class="fn">setUsers</span>(data))
+      .<span class="fn">catch</span>(err => { <span class="kw">if</span> (err.name !== <span class="str">'AbortError'</span>) console.<span class="fn">error</span>(err) })
+    <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+  }, [])
+
+  <span class="kw">const</span> filtered = <span class="fn">useMemo</span>(() => {  <span class="cm">// useMemo for filter</span>
+    <span class="kw">const</span> lower = debouncedQuery.<span class="fn">toLowerCase</span>()
+    <span class="kw">return</span> users.<span class="fn">filter</span>(u => u.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(lower))
+  }, [users, debouncedQuery])
+
+  <span class="kw">const</span> handleSelect = <span class="fn">useCallback</span>(user => <span class="fn">onSelectUser</span>(user), [onSelectUser])  <span class="cm">// useCallback</span>
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;div&gt;</span>
+      <span class="tg">&lt;input</span> value={search} onChange={e => <span class="fn">setSearch</span>(e.target.value)} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;Virtuoso</span>  <span class="cm">// Virtuoso for virtualization</span>
+        data={filtered}
+        itemContent={(i, user) => <span class="tg">&lt;UserCard</span> user={user} onSelect={handleSelect} <span class="tg">/&gt;</span>}
+      <span class="tg">/&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+  )
+}
+
+<span class="cm">// All 6 optimizations applied:</span>
+<span class="cm">// 1. React.memo  2. useMemo  3. useCallback  4. Debounce  5. AbortController  6. Virtuoso</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q2</span>
+          <span class="q-text"
+            >Lazy dashboard — 4 sections, skeleton loader, ErrorBoundary per
+            section</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// ErrorBoundary.jsx — class component (only way)</span>
+<span class="kw">class</span> <span class="fn">ErrorBoundary</span> <span class="kw">extends</span> React.Component {
+  state = { hasError: <span class="kw">false</span> }
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>() { <span class="kw">return</span> { hasError: <span class="kw">true</span> } }
+  <span class="fn">componentDidCatch</span>(error, info) { console.<span class="fn">error</span>(error, info) }
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.state.hasError) <span class="kw">return</span> (
+      <span class="tg">&lt;div&gt;</span>
+        Failed to load.
+        <span class="tg">&lt;button</span> onClick={() => <span class="kw">this</span>.<span class="fn">setState</span>({ hasError: <span class="kw">false</span> })}<span class="tg">&gt;</span>Retry<span class="tg">&lt;/button&gt;</span>
+      <span class="tg">&lt;/div&gt;</span>
+    )
+    <span class="kw">return this</span>.props.children
+  }
+}
+
+<span class="cm">// SectionWrapper.jsx — reusable</span>
+<span class="kw">function</span> <span class="fn">SectionWrapper</span>({ Component }) {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;ErrorBoundary&gt;</span>
+      <span class="tg">&lt;Suspense</span> fallback={<span class="tg">&lt;Skeleton</span> height={<span class="str">250</span>} <span class="tg">/&gt;</span>}<span class="tg">&gt;</span>
+        <span class="tg">&lt;Component</span> <span class="tg">/&gt;</span>
+      <span class="tg">&lt;/Suspense&gt;</span>
+    <span class="tg">&lt;/ErrorBoundary&gt;</span>
+  )
+}
+
+<span class="cm">// Dashboard.jsx — each in own file = separate chunk</span>
+<span class="kw">const</span> Analytics = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Analytics'</span>))
+<span class="kw">const</span> Revenue   = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Revenue'</span>))
+<span class="kw">const</span> Users     = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Users'</span>))
+<span class="kw">const</span> Activity  = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Activity'</span>))
+
+<span class="kw">function</span> <span class="fn">Dashboard</span>() {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;div&gt;</span>
+      <span class="tg">&lt;SectionWrapper</span> Component={Analytics} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;SectionWrapper</span> Component={Revenue} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;SectionWrapper</span> Component={Users} <span class="tg">/&gt;</span>
+      <span class="tg">&lt;SectionWrapper</span> Component={Activity} <span class="tg">/&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q3</span>
+          <span class="q-text"
+            >usePerformance hook — render count, render time, threshold
+            warning</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="kw">export const</span> <span class="fn">usePerformance</span> = (threshold = <span class="str">10</span>, componentName = <span class="str">'Component'</span>) => {
+  <span class="kw">const</span> renderCount = <span class="fn">useRef</span>(<span class="str">0</span>)
+  <span class="kw">const</span> startTime = <span class="fn">useRef</span>(<span class="fn">performance.now</span>())
+  <span class="kw">const</span> lastRenderTime = <span class="fn">useRef</span>(<span class="str">0</span>)
+
+  <span class="cm">// Called during render body — records start time</span>
+  startTime.current = <span class="fn">performance.now</span>()
+  renderCount.current += <span class="str">1</span>
+
+  <span class="fn">useEffect</span>(() => {  <span class="cm">// runs after every render</span>
+    lastRenderTime.current = <span class="fn">performance.now</span>() - startTime.current
+
+    <span class="kw">if</span> (renderCount.current > threshold) {
+      console.<span class="fn">warn</span>(
+        <span class="str">`⚠️ ${componentName} re-rendered ${renderCount.current} times. `</span> +
+        <span class="str">`Last: ${lastRenderTime.current.toFixed(2)}ms`</span>
+      )
+    }
+  })
+
+  <span class="kw">return</span> { renderCount: renderCount.current, lastRenderTime: lastRenderTime.current }
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">const</span> { renderCount, lastRenderTime } = <span class="fn">usePerformance</span>(<span class="str">5</span>, <span class="str">'UserList'</span>)</code></pre>
+          <div class="lbl lw">Watch out</div>
+          <div class="pt w">
+            Typo: threshold not threshhold (double h is wrong)
+          </div>
+          <div class="pt w">
+            setLastRenderTime in state causes extra re-renders — use useRef
+            instead
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== ROUND 4 ========== -->
+      <div class="round-header">
+        Round 4 — Mixed Theory + Coding + Tricky (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q1</span>
+          <span class="q-text"
+            >React Profiler API — how to use, what each param means</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="tg">&lt;Profiler</span> id=<span class="str">"UserList"</span> onRender={<span class="fn">callback</span>}<span class="tg">&gt;</span>
+  <span class="tg">&lt;UserList</span> <span class="tg">/&gt;</span>
+<span class="tg">&lt;/Profiler&gt;</span>
+
+<span class="kw">function</span> <span class="fn">callback</span>(
+  id,             <span class="cm">// "UserList" — Profiler id</span>
+  phase,          <span class="cm">// "mount" or "update"</span>
+  actualDuration, <span class="cm">// time for this render (ms) — high = slow component</span>
+  baseDuration,   <span class="cm">// time without memoization — compare with actual</span>
+  startTime,
+  commitTime
+) {
+  <span class="cm">// baseDuration=50ms, actualDuration=5ms → memo saving 45ms ✅</span>
+  <span class="cm">// baseDuration=50ms, actualDuration=50ms → memo not working ❌</span>
+}
+
+<span class="cm">// Only use in development — adds overhead</span>
+<span class="kw">const</span> isDev = process.env.NODE_ENV === <span class="str">'development'</span>
+isDev ? <span class="tg">&lt;Profiler</span> ...<span class="tg">&gt;&lt;App</span> <span class="tg">/&gt;&lt;/Profiler&gt;</span> : <span class="tg">&lt;App</span> <span class="tg">/&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q2</span>
+          <span class="q-text"
+            >Component-level vs application-level memoization</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8/10</span>
+          <pre><code><span class="cm">// Component level — scoped to one component, lost on unmount</span>
+<span class="kw">const</span> sorted = <span class="fn">useMemo</span>(() => [...products].<span class="fn">sort</span>(...), [products])
+<span class="kw">const</span> handleSelect = <span class="fn">useCallback</span>((id) => {}, [])
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(Component)
+
+<span class="cm">// Application level — shared across all components, persists navigation</span>
+<span class="cm">// React Query — API cache</span>
+<span class="kw">const</span> { data } = <span class="fn">useQuery</span>([<span class="str">'products'</span>], fetchProducts, {
+  staleTime: <span class="str">5</span> * <span class="str">60</span> * <span class="str">1000</span>  <span class="cm">// cache 5 minutes</span>
+})
+<span class="cm">// ComponentA fetches → cached → ComponentB gets from cache instantly</span>
+
+<span class="cm">// Redux createSelector — memoized global derived state</span>
+<span class="kw">const</span> selectExpensive = <span class="fn">createSelector</span>(
+  state => state.products,
+  products => products.<span class="fn">filter</span>(p => p.price > <span class="str">1000</span>)
+)</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q3</span>
+          <span class="q-text"
+            >React.lazy with manual Promise — what renders? Is it valid?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Initial render: only button (show=false)</span>
+<span class="cm">// Click: "Loading..." immediately shown</span>
+<span class="cm">// After 2s: "Heavy Component Loaded"</span>
+
+<span class="cm">// Valid — React.lazy just needs: () => Promise&lt;{ default: Component }&gt;</span>
+<span class="cm">// Manual Promise satisfies this requirement</span>
+
+<span class="cm">// Second click: show already true — no re-render (Object.is bails out)</span>
+<span class="cm">// If toggled off/on: loads INSTANTLY — Promise result is cached by React</span>
+
+<span class="cm">// If Promise rejects → ErrorBoundary catches it (not Suspense)</span>
+<span class="kw">const</span> Broken = React.<span class="fn">lazy</span>(() => <span class="kw">new</span> <span class="fn">Promise</span>((_, reject) =>
+  <span class="fn">setTimeout</span>(() => <span class="fn">reject</span>(<span class="kw">new</span> <span class="fn">Error</span>(<span class="str">'Failed'</span>)), <span class="str">1000</span>)
+))
+<span class="cm">// Without ErrorBoundary → crashes entire app</span>
+
+<span class="cm">// Useful for: testing Suspense fallback without real network</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q4</span>
+          <span class="q-text"
+            >Performance debugging process — step by step</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <div class="lbl la">Complete Debugging Order</div>
+          <pre><code><span class="cm">// Step 1 — Reproduce and categorize</span>
+<span class="cm">// Slow load? Input lag? Scroll jank? Specific interaction?</span>
+
+<span class="cm">// Step 2 — Lighthouse (run first)</span>
+<span class="cm">// → Overall score, LCP/INP/CLS, bundle size, unused JS</span>
+
+<span class="cm">// Step 3 — Network tab</span>
+<span class="cm">// → Large bundles, slow API calls, unnecessary requests</span>
+
+<span class="cm">// Step 4 — Bundle analyzer</span>
+<span class="cm">// npm run build -- --analyze (webpack)</span>
+<span class="cm">// rollup-plugin-visualizer (Vite)</span>
+<span class="cm">// → Which libraries are largest, what can be split/replaced</span>
+
+<span class="cm">// Step 5 — React DevTools Profiler</span>
+<span class="cm">// → High actualDuration = slow component</span>
+<span class="cm">// → Components re-rendering unnecessarily</span>
+<span class="cm">// → "What caused this update" column</span>
+
+<span class="cm">// Step 6 — Chrome Performance tab</span>
+<span class="cm">// → Long tasks, main thread blocking</span>
+
+<span class="cm">// Step 7 — Apply fixes one at a time</span>
+<span class="cm">// Re-measure after each fix</span>
+
+<span class="cm">// Step 8 — Test on throttled conditions</span>
+<span class="cm">// CPU 4x slowdown + Slow 3G in Chrome DevTools</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q5</span>
+          <span class="q-text"
+            >useDeferredValue vs useTransition — difference + when to use
+            each</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7.5/10</span>
+          <pre><code><span class="cm">// useDeferredValue — when you have a VALUE you don't control</span>
+<span class="kw">function</span> <span class="fn">Search</span>({ query }) {  <span class="cm">// query from props — can't control it</span>
+  <span class="kw">const</span> deferredQuery = <span class="fn">useDeferredValue</span>(query)
+  <span class="kw">const</span> isStale = query !== deferredQuery
+
+  <span class="kw">const</span> results = <span class="fn">useMemo</span>(() =>
+    <span class="fn">heavySearch</span>(items, deferredQuery)
+  , [deferredQuery])
+
+  <span class="kw">return</span> <span class="tg">&lt;div</span> style={{ opacity: isStale ? <span class="str">0.5</span> : <span class="str">1</span> }}<span class="tg">&gt;</span>{results}<span class="tg">&lt;/div&gt;</span>
+}
+
+<span class="cm">// useTransition — when you control the STATE UPDATE</span>
+<span class="kw">function</span> <span class="fn">TabSwitcher</span>() {
+  <span class="kw">const</span> [tab, setTab] = <span class="fn">useState</span>(<span class="str">'home'</span>)
+  <span class="kw">const</span> [isPending, startTransition] = <span class="fn">useTransition</span>()
+
+  <span class="kw">const</span> <span class="fn">switchTab</span> = (newTab) => {
+    <span class="fn">startTransition</span>(() => {
+      <span class="fn">setTab</span>(newTab)  <span class="cm">// marked as non-urgent</span>
+    })
+  }
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;button</span> onClick={() => <span class="fn">switchTab</span>(<span class="str">'profile'</span>)}<span class="tg">&gt;</span>
+      Profile {isPending && <span class="str">'...'</span>}  <span class="cm">// isPending only in useTransition</span>
+    <span class="tg">&lt;/button&gt;</span>
+  )
+}
+
+<span class="cm">// Key difference:</span>
+<span class="cm">// useDeferredValue = "defer this VALUE" (from props/external)</span>
+<span class="cm">// useTransition    = "this STATE UPDATE is not urgent" (you control it)</span>
+<span class="cm">// useTransition gives isPending, useDeferredValue does not</span>
+<span class="cm">// Both are React 18 concurrent features</span></code></pre>
+        </div>
+      </div>
+
+      <div class="weak-box">
+        <h3>Day 5 — Weak Areas to Revise</h3>
+        <div class="wi">
+          useDeferredValue + useTransition — always show code for both, explain
+          isPending difference
+        </div>
+        <div class="wi">
+          Tree shaking — named import vs namespace import with bundle size
+          numbers
+        </div>
+        <div class="wi">
+          React Profiler — actualDuration vs baseDuration comparison tells you
+          if memo is working
+        </div>
+        <div class="wi">
+          Lighthouse — run this FIRST in any performance debugging session
+        </div>
+        <div class="wi">
+          Bundle analyzer — know how to run it for webpack and Vite
+        </div>
+        <div class="wi">
+          React.memo — context updates bypass memo completely
+        </div>
+        <div class="wi">
+          React.lazy — only works with default exports, workaround for named
+          exports
+        </div>
+        <div class="wi">
+          res.ok check — still recurring, must be automatic in every fetch
+        </div>
+      </div>
+    </div>
+    <script>
+      function toggle(h) {
+        h.parentElement.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

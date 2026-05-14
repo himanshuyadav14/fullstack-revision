@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 2 - JS Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #38bdf8;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #38bdf8;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #7dd3fc;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #0a1a2a;
+        border-left: 3px solid #38bdf8;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #38bdf8;
+        border: 1px solid #38bdf8;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 2 - JS Interview</h1>
+    <p style="color: #888">
+      Event Loop + Promises + Call/Apply/Bind + Prototypes | 25 Questions
+    </p>
+
+    <h2>Round 1 - Event Loop + Promises</h2>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>Difference between Microtask and Macrotask Queue?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Microtask Queue — higher priority
+// Promise.then(), async/await, queueMicrotask()
+
+// Macrotask Queue — lower priority
+// setTimeout, setInterval, DOM events
+
+// Priority: Call Stack > Microtask > Macrotask
+
+console.log("1"); // Call Stack
+setTimeout(() => console.log("2"), 0); // Macrotask
+Promise.resolve().then(() => console.log("3")); // Microtask
+console.log("4"); // Call Stack
+// Output: 1, 4, 3, 2</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>Output?</p>
+      <pre>
+console.log("1");
+setTimeout(() => console.log("2"), 0);
+Promise.resolve().then(() => console.log("3"));
+setTimeout(() => console.log("4"), 0);
+Promise.resolve().then(() => console.log("5"));
+console.log("6");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+1, 6, 3, 5, 2, 4
+// Sync: 1, 6
+// Microtask: 3, 5
+// Macrotask: 2, 4</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>Output?</p>
+      <pre>
+async function test() {
+  console.log("1");
+  await Promise.resolve();
+  console.log("2");
+}
+console.log("3");
+test();
+console.log("4");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+3, 1, 4, 2
+// await internally uses microtask queue!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>What is Promise Chaining? Fix the bug!</p>
+      <pre>
+fetch("https://api.example.com/user")
+  .then((response) => {
+    response.json(); // bug here!
+  })
+  .then((data) => {
+    console.log(data); // undefined — why?
+  });</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Bug — missing return!
+// Every .then() must return something!
+
+fetch("https://api.example.com/user")
+  .then((response) => response.json()) // return! ✅
+  .then((data) => console.log(data))
+  .catch((err) => console.log(err));</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>Promise.all with 3 promises — output and time?</p>
+      <pre>
+const p1 = new Promise(resolve => setTimeout(() => resolve("User"), 3000));
+const p2 = new Promise(resolve => setTimeout(() => resolve("Cart"), 1000));
+const p3 = new Promise(resolve => setTimeout(() => resolve("Order"), 2000));
+Promise.all([p1, p2, p3]).then(results => console.log(results));</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// After 3 seconds (max time!)
+["User", "Cart", "Order"]
+// All run in PARALLEL — total = max time not sum!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>Output? (one promise rejects)</p>
+      <pre>
+const p1 = new Promise(resolve => setTimeout(() => resolve("P1"), 3000));
+const p2 = new Promise((_, reject) => setTimeout(() => reject("P2 failed!"), 1000));
+const p3 = new Promise(resolve => setTimeout(() => resolve("P3"), 2000));
+Promise.all([p1, p2, p3])
+  .then(data => console.log(data))
+  .catch(err => console.log(err));</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"P2 failed!" after 1 second
+// Promise.all fails fast on first rejection!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>Promise.race() — output and time?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"P2 done" after 1 second
+// Promise.race returns FIRST settled (resolve OR reject)
+
+// Promise methods summary:
+// Promise.all() — fails fast, waits all if success
+// Promise.allSettled() — always waits for all
+// Promise.race() — first settled wins
+// Promise.any() — first resolved wins</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>Make 3 parallel API calls using Promise.all!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const getUser = () => fetch("https://api.example.com/user");
+const getCart = () => fetch("https://api.example.com/cart");
+const getOrder = () => fetch("https://api.example.com/order");
+
+const func = async () => {
+  try {
+    const responses = await Promise.all([getUser(), getCart(), getOrder()]);
+    const data = await Promise.all(responses.map(r => r.json()));
+    console.log(data);
+  } catch (err) {
+    console.log("Error", err);
+  }
+};
+
+// For 14 APIs — scalable!
+const apiUrls = ["url1", "url2", "url3"];
+const responses = await Promise.all(apiUrls.map(url => fetch(url)));
+const data = await Promise.all(responses.map(r => r.json()));</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 2 - Call, Apply, Bind</h2>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>What is call()? Show function borrowing!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const person = {
+  name: "Himanshu",
+  greet: function(city, country) {
+    console.log(`Hi I am ${this.name} from ${city}, ${country}`);
+  }
+}
+const person2 = { name: "Rahul" }
+
+// call — executes immediately, args comma separated
+person.greet.call(person2, "Jaipur", "India");
+// "Hi I am Rahul from Jaipur, India"</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>What is apply()? How is it different from call()?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// apply — args in ARRAY
+person.greet.apply(person2, ["Jaipur", "India"]);
+
+// call — C for Comma separated
+// apply — A for Array
+
+// Real use case:
+const nums = [5, 2, 8, 1, 9];
+Math.max.apply(null, nums); // 9
+Math.max(...nums);          // 9 (modern way)</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q11</span>
+      <p>What is bind()? How is it different?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// bind — does NOT execute! Returns new function!
+const greetRahul = person.greet.bind(person2, "Jaipur", "India");
+greetRahul(); // executes later!
+
+// Summary:
+// call()  — executes immediately, comma args
+// apply() — executes immediately, array args
+// bind()  — returns new function, comma args
+
+// Real use case — event listeners
+button.addEventListener("click", obj.handleClick.bind(obj));</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q12</span>
+      <p>Fix this using bind()!</p>
+      <pre>
+const obj = {
+  name: "Himanshu",
+  greet: function() { console.log(this.name); }
+}
+const greet = obj.greet;
+greet(); // undefined — fix!</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const greet = obj.greet.bind(obj);
+greet(); // "Himanshu" ✅</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q13</span>
+      <p>Use call, apply, bind with calculator!</p>
+      <pre>
+const calculator = {
+  multiply: function(a, b) { return a * b; }
+}
+const obj1 = { value: 5 };
+const obj2 = { value: 10 };</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// call
+calculator.multiply.call(obj1, obj1.value, obj2.value); // 50
+
+// apply
+calculator.multiply.apply(obj1, [obj1.value, obj2.value]); // 50
+
+// bind
+const mult = calculator.multiply.bind(obj1, obj1.value, obj2.value);
+mult(); // 50</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 3 - Prototypes & Inheritance</h2>
+
+    <div class="q">
+      <span class="q-num">Q14</span>
+      <p>What is Prototype? What is Prototype Chain?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Every object has __proto__ pointing to its prototype
+// Prototype = shared methods object
+
+const arr = [1, 2, 3];
+arr.__proto__ === Array.prototype // true
+// map, filter, reduce are on Array.prototype!
+
+// Prototype Chain:
+// arr -> Array.prototype -> Object.prototype -> null
+
+// JS looks up the chain if property not found!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q15</span>
+      <p>Add greet() to Person using prototype!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function Person(name, age) {
+  this.name = name;
+  this.age = age;
+}
+
+Person.prototype.greet = function() {
+  console.log(`Hi I am ${this.name}`);
+}
+
+const p1 = new Person("Himanshu", 32);
+const p2 = new Person("Rahul", 25);
+p1.greet(); // ✅ — shared method!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q16</span>
+      <p>Prototypal Inheritance — Student inherits Person!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function Student(name, age, course) {
+  Person.call(this, name, age); // borrow constructor
+  this.course = course;
+}
+
+Student.prototype = Object.create(Person.prototype);
+Student.prototype.constructor = Student;
+
+// ES6 way (cleaner):
+class Student extends Person {
+  constructor(name, age, course) {
+    super(name, age);
+    this.course = course;
+  }
+}
+
+const s1 = new Student("Himanshu", 32, "JavaScript");
+s1.greet(); // inherited! ✅</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q17</span>
+      <p>Difference between __proto__ and prototype?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// prototype — on constructor functions
+Person.prototype // object where methods are stored
+
+// __proto__ — on instances, links to prototype
+const p1 = new Person("Himanshu");
+p1.__proto__ === Person.prototype // true!
+
+// prototype = actual object with methods
+// __proto__ = link to that object</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 4 - Error Handling + Misc</h2>
+
+    <div class="q">
+      <span class="q-num">Q18</span>
+      <p>Types of errors in JavaScript?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// 1. SyntaxError — wrong syntax
+const x = ; // SyntaxError
+
+// 2. ReferenceError — variable doesn't exist
+console.log(abc); // ReferenceError
+
+// 3. TypeError — wrong type operation
+null.name; // TypeError
+const y = 5; y(); // TypeError
+
+// 4. RangeError — value out of range
+new Array(-1); // RangeError</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q19</span>
+      <p>Fix async function with proper error handling!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+async function getUser() {
+  try {
+    const response = await fetch("https://api.example.com/user");
+    if (!response.ok) throw new Error("404");
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+}</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q20</span>
+      <p>typeof outputs for 8 different values?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+typeof "hello"      // "string"
+typeof 42           // "number"
+typeof true         // "boolean"
+typeof undefined    // "undefined"
+typeof null         // "object" — JS BUG!
+typeof {}           // "object"
+typeof []           // "object" — not "array"!
+typeof function(){} // "function"
+
+// Check array: Array.isArray([]) // true</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q21</span>
+      <p>What is NaN? Output?</p>
+      <pre>
+console.log(typeof NaN);
+console.log(NaN === NaN);
+console.log(isNaN("hello"));</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"number"  // JS quirk — NaN is typeof "number"!
+false     // NaN is never equal to itself!
+true      // isNaN converts "hello" to NaN first!
+
+// Better check:
+Number.isNaN(NaN)     // true
+Number.isNaN("hello") // false — no conversion!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q22</span>
+      <p>Shallow copy vs Deep copy!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const obj = { name: "Himanshu", address: { city: "Jaipur" } };
+
+// Shallow copy — nested still shared!
+const obj2 = { ...obj };
+obj2.address.city = "Delhi"; // affects obj too! Bug!
+
+// Deep copy — completely independent!
+const obj3 = structuredClone(obj);
+const obj4 = JSON.parse(JSON.stringify(obj)); // loses functions!</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,648 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 1 - JS Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #4ade80;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #4ade80;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #fbbf24;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #0a2a0a;
+        border-left: 3px solid #22c55e;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #4ade80;
+        border: 1px solid #4ade80;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 1 - JS Interview</h1>
+    <p style="color: #888">Fundamentals + Arrays | 27 Questions</p>
+
+    <h2>Round 1 - Fundamentals</h2>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>What is Hoisting in JavaScript? Explain with an example!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Hoisting = JS moves declarations to top before execution
+// var is hoisted with undefined
+// let/const are hoisted but in TDZ
+
+console.log(a); // undefined — var hoisted!
+var a = 5;
+
+console.log(b); // ReferenceError — TDZ!
+let b = 10;
+
+// Function declarations fully hoisted!
+greet(); // works!
+function greet() { console.log("Hello!"); }</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>What is the difference between == and ===?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// == loose equality — type coercion
+// === strict equality — no coercion
+
+"5" == 5   // true — JS converts "5" to 5
+"5" === 5  // false — different types
+
+null == undefined   // true — special case!
+null === undefined  // false</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>Output?</p>
+      <pre>
+console.log(1 + "2" + 3);
+console.log(1 + 2 + "3");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"123"  // 1+"2"="12", "12"+3="123"
+"33"   // 1+2=3, 3+"3"="33"
+// String + anything = string concatenation!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>Output?</p>
+      <pre>
+var x = 10;
+function foo() {
+  var x = 20;
+  console.log(x);
+}
+foo();
+console.log(x);</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+20  // function scope x
+10  // global x untouched
+// Scope Chain: inner -> outer -> global</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>Output?</p>
+      <pre>
+function counter() {
+  let count = 0;
+  return function() {
+    count++;
+    console.log(count);
+  }
+}
+const increment = counter();
+increment();
+increment();
+increment();</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+1
+2
+3
+// Closure — inner function remembers count!
+// Each closure has its own separate count!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>Output? Fix it to print 0,1,2!</p>
+      <pre>
+for(var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1000);
+}</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Output: 3, 3, 3 — var is shared!
+
+// Fix 1 — use let
+for(let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 1000);
+}
+
+// Fix 2 — IIFE
+for(var i = 0; i < 3; i++) {
+  (function(j) {
+    setTimeout(() => console.log(j), 1000);
+  })(i);
+}</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>What is the difference between null and undefined?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// undefined — JS assigns automatically
+let a;
+console.log(a); // undefined
+
+// null — developer assigns intentionally
+let user = null; // "intentionally empty"
+
+typeof undefined // "undefined"
+typeof null      // "object" — famous JS bug!
+
+null == undefined  // true
+null === undefined // false</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 2 - Array Methods</h2>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>Difference between slice and splice?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const arr = [1, 2, 3, 4, 5];
+
+// slice(start, end) — does NOT modify original
+arr.slice(1, 3); // [2, 3] — end is exclusive
+console.log(arr); // [1,2,3,4,5] unchanged!
+
+// splice(start, deleteCount) — MODIFIES original
+arr.splice(1, 2); // [2, 3] — removes from arr
+console.log(arr); // [1, 4, 5] modified!
+
+// splice can also ADD!
+arr.splice(1, 0, 99); // adds 99 at index 1</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>Extract [3,4] using slice and splice from [1,2,3,4,5]!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const arr = [1, 2, 3, 4, 5];
+
+// slice
+arr.slice(2, 4); // [3, 4]
+
+// splice
+arr.splice(2, 2); // [3, 4]</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>Double every element using map()!</p>
+      <pre>
+const arr = [1, 2, 3, 4, 5];
+// Output: [2, 4, 6, 8, 10]</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const newArr = arr.map((x) => x * 2);
+// map returns NEW array — original unchanged!
+// Callback gets (element, index, array)</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q11</span>
+      <p>Get only even numbers using filter()!</p>
+      <pre>
+const arr = [1,2,3,4,5,6,7,8,9,10];
+// Output: [2,4,6,8,10]</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const newArr = arr.filter((x) => x % 2 === 0);
+// filter returns NEW array
+// callback must return true/false
+// true = keep, false = remove</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q12</span>
+      <p>Get sum using reduce()!</p>
+      <pre>
+const arr = [1, 2, 3, 4, 5];
+// Output: 15</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const sum = arr.reduce((acc, curr) => acc + curr, 0);
+// acc = accumulator (starts at 0)
+// curr = current element
+// Step: 0+1=1, 1+2=3, 3+3=6, 6+4=10, 10+5=15</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q13</span>
+      <p>Difference between map() and forEach()?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// map — returns NEW array
+const doubled = arr.map(x => x * 2); // [2,4,6]
+
+// forEach — returns undefined
+const result = arr.forEach(x => x * 2); // undefined
+
+// Use map when you need result
+// Use forEach for side effects (logging etc)</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q14</span>
+      <p>Get names of users who are 18 or older!</p>
+      <pre>
+const users = [
+  { name: "Rahul", age: 25 },
+  { name: "Priya", age: 17 },
+  { name: "Amit", age: 30 },
+  { name: "Sara", age: 15 },
+];
+// Output: ["Rahul", "Amit"]</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+users
+  .filter((obj) => obj.age >= 18)
+  .map((obj) => obj.name);
+// ["Rahul", "Amit"] ✅</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 3 - Promises & Async/Await</h2>
+
+    <div class="q">
+      <span class="q-num">Q15</span>
+      <p>What is a Promise? What are its 3 states?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Promise = object representing eventual completion/failure
+// 3 states: pending, fulfilled, rejected
+
+const p = new Promise((resolve, reject) => {
+  resolve("success!"); // fulfilled
+  // reject("error!"); // rejected
+});
+
+p.then(data => console.log(data))
+ .catch(err => console.log(err))
+ .finally(() => console.log("always runs"));</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q16</span>
+      <p>What is callback hell? Show example + Promise solution!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Callback Hell — pyramid of doom!
+loginUser("himanshu@gmail.com", function(userId) {
+  getCart(userId, function(cart) {
+    createOrder(cart, function(orderId) {
+      makePayment(orderId, function(paymentId) {
+        console.log("Payment done!");
+      });
+    });
+  });
+});
+
+// Promise solution — clean chain!
+loginUser("himanshu@gmail.com")
+  .then(userId => getCart(userId))
+  .then(cart => createOrder(cart))
+  .then(orderId => makePayment(orderId))
+  .catch(err => console.log(err));</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q17</span>
+      <p>What is Async/Await? Rewrite above using async/await!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+async function orderFlow() {
+  try {
+    const userId = await loginUser("himanshu@gmail.com");
+    const cart = await getCart(userId);
+    const orderId = await createOrder(cart);
+    const paymentId = await makePayment(orderId);
+    console.log("Payment done!", paymentId);
+  } catch(err) {
+    console.log(err);
+  }
+}
+// await pauses function until Promise resolves
+// async function always returns a Promise!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q18</span>
+      <p>Output?</p>
+      <pre>
+async function getData() {
+  console.log("1");
+  const data = await fetch("https://api.example.com");
+  console.log("2");
+}
+console.log("3");
+getData();
+console.log("4");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+3, 1, 4, 2
+// 3 - sync
+// getData() called
+// 1 - sync inside function
+// await hit - function paused, popped from stack
+// 4 - continues outside
+// fetch resolves - 2 runs (microtask)</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q19</span>
+      <p>Difference between Promise.all() and Promise.allSettled()?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Promise.all — fails fast on first rejection!
+Promise.all([p1, p2, p3])
+  .then(results => console.log(results))
+  .catch(err => console.log(err)); // first failure!
+
+// Promise.allSettled — waits for ALL!
+Promise.allSettled([p1, p2, p3])
+  .then(results => {
+    // [{status:"fulfilled", value:...},
+    //  {status:"rejected", reason:...}]
+  });</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q20</span>
+      <p>Fix this async function!</p>
+      <pre>
+async function fetchData() {
+  const data = await fetch("https://api.example.com");
+  return data.json();
+}</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+async function fetchData() {
+  try {
+    const response = await fetch("https://api.example.com");
+    if (!response.ok) throw new Error("404");
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+}</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 4 - ES6+ Features</h2>
+
+    <div class="q">
+      <span class="q-num">Q21</span>
+      <p>What is Destructuring? Array + Object example!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Array destructuring
+const arr = [1, 2, 3];
+const [a, b, c] = arr;
+const [first, , third] = arr; // skip elements
+
+// Object destructuring
+const obj = { name: "Himanshu", age: 32 };
+const { name, age } = obj;
+
+// Rename while destructuring
+const { name: myName } = obj;
+
+// Default value
+const { city = "Delhi" } = obj;</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q22</span>
+      <p>Difference between Spread and Rest operator?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Spread — expands array/object
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combined = [...arr1, ...arr2]; // [1,2,3,4,5,6]
+
+const obj3 = { ...obj1, ...obj2 }; // merge objects
+
+// Rest — collects multiple values
+function sum(...numbers) {
+  return numbers.reduce((acc, curr) => acc + curr, 0);
+}
+sum(1, 2, 3, 4, 5); // 15
+
+const [first, ...remaining] = [1, 2, 3, 4];
+// first=1, remaining=[2,3,4]</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q23</span>
+      <p>What are Template Literals? Old vs new way!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const name = "Himanshu";
+
+// Old way
+const str = "My name is " + name;
+
+// Template literal
+const str2 = `My name is ${name}`;
+
+// Multi-line
+const msg = `Hello
+World`; // no \n needed!
+
+// Expression
+console.log(`Sum: ${1 + 2}`); // "Sum: 3"</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q24</span>
+      <p>Difference between for...of and for...in?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const arr = [10, 20, 30];
+const obj = { a: 1, b: 2, c: 3 };
+
+// for...of — VALUES (arrays/strings)
+for(const val of arr) console.log(val); // 10,20,30
+
+// for...in — KEYS (objects)
+for(const key in obj) console.log(key); // a,b,c
+
+// for...in on array gives INDEXES!
+for(const i in arr) console.log(i); // 0,1,2 — not values!</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>

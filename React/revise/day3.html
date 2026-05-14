@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Interview — Day 3</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        line-height: 1.7;
+      }
+      .top-bar {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 16px 24px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .top-bar h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .top-bar p {
+        font-size: 13px;
+        color: #888;
+        margin-top: 2px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .round-header {
+        font-size: 13px;
+        font-weight: 700;
+        color: #818cf8;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 36px 0 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .qa-card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .qa-header {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .qa-header:hover {
+        background: #222;
+      }
+      .q-num {
+        background: #4f46e5;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 3px;
+      }
+      .q-text {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 500;
+        flex: 1;
+      }
+      .icon {
+        color: #555;
+        font-size: 18px;
+        transition: transform 0.2s;
+        flex-shrink: 0;
+      }
+      .qa-card.open .icon {
+        transform: rotate(180deg);
+      }
+      .qa-body {
+        display: none;
+        padding: 16px 20px 20px;
+        border-top: 1px solid #2a2a2a;
+      }
+      .qa-card.open .qa-body {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        margin-bottom: 12px;
+      }
+      .sh {
+        background: #1e3a1e;
+        color: #4ade80;
+        border: 1px solid #2d5a2d;
+      }
+      .sm {
+        background: #3a2e00;
+        color: #fbbf24;
+        border: 1px solid #5a4500;
+      }
+      .sl {
+        background: #3a1a1a;
+        color: #f87171;
+        border: 1px solid #5a2a2a;
+      }
+      .lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 14px 0 6px;
+      }
+      .lc {
+        color: #4ade80;
+      }
+      .lw {
+        color: #fbbf24;
+      }
+      .la {
+        color: #818cf8;
+      }
+      .pt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 6px;
+        padding: 6px 10px;
+        border-left: 3px solid #2a2a2a;
+        background: #151515;
+        border-radius: 0 6px 6px 0;
+      }
+      .pt.g {
+        border-left-color: #4ade80;
+      }
+      .pt.w {
+        border-left-color: #fbbf24;
+      }
+      pre {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-size: 13px;
+        line-height: 1.7;
+        font-family: "Fira Code", monospace;
+      }
+      .kw {
+        color: #c084fc;
+      }
+      .fn {
+        color: #60a5fa;
+      }
+      .str {
+        color: #34d399;
+      }
+      .cm {
+        color: #4b5563;
+        font-style: italic;
+      }
+      .tg {
+        color: #f87171;
+      }
+      .txt {
+        font-size: 14px;
+        color: #ccc;
+        margin-bottom: 8px;
+      }
+      .weak-box {
+        background: #1e1a00;
+        border: 1px solid #3a3000;
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 32px;
+      }
+      .weak-box h3 {
+        color: #fbbf24;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        text-transform: uppercase;
+      }
+      .wi {
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 7px;
+        padding-left: 14px;
+        border-left: 2px solid #fbbf24;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        margin: 20px 0 32px;
+      }
+      .sc {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+      .sc .l {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .sc .v {
+        font-size: 18px;
+        font-weight: 700;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <h1>⚛️ React Interview — Day 3</h1>
+      <p>useMemo · useCallback · useContext · Custom Hooks · Patterns</p>
+    </div>
+    <div class="container">
+      <div class="summary">
+        <div class="sc">
+          <div class="l">Round 1</div>
+          <div class="v">36.5/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 2</div>
+          <div class="v">45/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 3</div>
+          <div class="v">38/40</div>
+        </div>
+        <div class="sc">
+          <div class="l">Round 4</div>
+          <div class="v">39/50</div>
+        </div>
+        <div class="sc">
+          <div class="l">Total</div>
+          <div class="v">83.4%</div>
+        </div>
+      </div>
+
+      <div class="round-header">
+        Round 1 — Theory Fundamentals (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q1</span>
+          <span class="q-text"
+            >What problem do useMemo and useCallback actually solve? Why do they
+            exist?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7/10</span>
+          <div class="lbl la">Root Cause — Referential Equality</div>
+          <pre><code><span class="cm">// Primitives compared by VALUE</span>
+1 === 1  <span class="cm">// true</span>
+
+<span class="cm">// Objects/functions compared by REFERENCE</span>
+{} === {}            <span class="cm">// false — new object each render</span>
+() => {} === () => {} <span class="cm">// false — new function each render</span>
+
+<span class="cm">// Problem 1 — expensive recalculation every render</span>
+<span class="kw">const</span> result = <span class="fn">heavyCalc</span>(data)  <span class="cm">// runs on every render ❌</span>
+<span class="kw">const</span> result = <span class="fn">useMemo</span>(() => <span class="fn">heavyCalc</span>(data), [data])  <span class="cm">// cached ✅</span>
+
+<span class="cm">// Problem 2 — unstable function reference breaks React.memo</span>
+<span class="kw">const</span> fn = () => {}  <span class="cm">// new ref every render ❌</span>
+<span class="kw">const</span> fn = <span class="fn">useCallback</span>(() => {}, [])  <span class="cm">// stable ref ✅</span></code></pre>
+          <div class="lbl lw">When NOT to use</div>
+          <div class="pt w">
+            Both have comparison overhead every render — don't add by default
+          </div>
+          <div class="pt w">
+            useMemo only for expensive calculations. useCallback only when child
+            uses React.memo
+          </div>
+          <div class="pt w">
+            useCallback(fn, deps) is literally useMemo(() => fn, deps) under the
+            hood
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q2</span>
+          <span class="q-text"
+            >React.memo vs useMemo — difference? Custom comparator?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 6/10</span>
+          <div class="lbl la">Distinction</div>
+          <p class="txt">
+            React.memo — HOC wrapping a component. Skips re-render if props
+            unchanged (shallow compare).
+          </p>
+          <p class="txt">
+            useMemo — Hook inside component. Caches computed value until deps
+            change.
+          </p>
+          <pre><code><span class="cm">// React.memo wraps component</span>
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(({ user }) => <span class="tg">&lt;div&gt;</span>{user.name}<span class="tg">&lt;/div&gt;</span>)
+
+<span class="cm">// React.memo with custom comparator</span>
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(Component, (prev, next) => {
+  <span class="kw">return</span> prev.user.id === next.user.id
+  <span class="cm">// true = skip re-render, false = re-render</span>
+})
+
+<span class="cm">// useMemo inside component</span>
+<span class="kw">const</span> sorted = <span class="fn">useMemo</span>(() => [...users].<span class="fn">sort</span>(...), [users])</code></pre>
+          <div class="lbl lw">Shallow Compare Trap</div>
+          <div class="pt w">
+            Object literal prop: &lt;Child user={{ name: 'Alice' }} /&gt; — new
+            ref every render — React.memo useless
+          </div>
+          <div class="pt w">
+            Fix: const user = useMemo(() => ({ name: 'Alice' }), [])
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q3</span>
+          <span class="q-text"
+            >React.memo applied but Child STILL re-renders — find both bugs +
+            fix</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <pre><code><span class="cm">// ❌ Bug 1 — new object reference every render</span>
+<span class="kw">const</span> config = { label: <span class="str">'Click me'</span> }
+
+<span class="cm">// ❌ Bug 2 — new function reference every render</span>
+<span class="kw">const</span> onUpdate = () => <span class="fn">setCount</span>(c => c + 1)
+
+<span class="cm">// ✅ Fix both</span>
+<span class="kw">const</span> config = <span class="fn">useMemo</span>(() => ({ label: <span class="str">'Click me'</span> }), [])
+<span class="kw">const</span> onUpdate = <span class="fn">useCallback</span>(() => <span class="fn">setCount</span>(c => c + 1), [])</code></pre>
+          <div class="lbl lw">Golden Rule</div>
+          <div class="pt w">
+            React.memo + useCallback almost always go together. One without the
+            other is usually incomplete.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q4</span>
+          <span class="q-text"
+            >useContext — setup + does it cause re-renders? Performance
+            problem?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7/10</span>
+          <pre><code><span class="cm">// 1. Create</span>
+<span class="kw">const</span> UserContext = <span class="fn">createContext</span>()
+
+<span class="cm">// 2. Provide — always memoize value!</span>
+<span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ user, setUser }), [user])
+<span class="tg">&lt;UserContext.Provider</span> value={value}<span class="tg">&gt;</span>...children...<span class="tg">&lt;/UserContext.Provider&gt;</span>
+
+<span class="cm">// 3. Consume</span>
+<span class="kw">const</span> { user } = <span class="fn">useContext</span>(UserContext)</code></pre>
+          <div class="lbl lw">Performance Problem</div>
+          <div class="pt w">
+            ALL consumers re-render when ANY part of context changes — even if
+            they don't use the changed part
+          </div>
+          <div class="pt w">
+            Fix: split contexts by concern (UserContext, ThemeContext
+            separately)
+          </div>
+          <div class="pt w">Fix: memoize provider value with useMemo</div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R1 Q5</span>
+          <span class="q-text"
+            >useContext vs Redux/Zustand — when to use each? Context
+            limitations?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 6.5/10</span>
+          <div class="lbl la">When to Use Each</div>
+          <pre><code><span class="cm">// Context — theme, current user, locale, feature flags</span>
+<span class="cm">// Static or rarely changing global values</span>
+
+<span class="cm">// Zustand/Redux — shopping cart, real-time data,</span>
+<span class="cm">// frequent updates, middleware needed, devtools needed</span>
+
+<span class="cm">// Zustand granular subscription — Context cannot do this</span>
+<span class="kw">const</span> count = <span class="fn">useStore</span>(state => state.count)
+<span class="cm">// only re-renders when count changes, not other state</span></code></pre>
+          <div class="lbl lw">Context Limitations</div>
+          <div class="pt w">
+            No granular subscriptions — can't subscribe to just one field
+          </div>
+          <div class="pt w">No middleware — can't log/intercept actions</div>
+          <div class="pt w">No devtools — can't time-travel debug</div>
+          <div class="pt w">Context solves CONVENIENCE, not PERFORMANCE</div>
+        </div>
+      </div>
+
+      <div class="round-header">
+        Round 2 — Theory + Output Questions (5 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q1</span>
+          <span class="q-text"
+            >useCallback [] deps — Child re-renders on A/B? Stale closure
+            bug?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8/10</span>
+          <pre><code><span class="cm">// Child does NOT re-render for A or B increment</span>
+<span class="cm">// handleClick has [] → same ref always → React.memo skips</span>
+
+<span class="cm">// BUG — stale closure: always logs 0</span>
+<span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(() => {
+  console.<span class="fn">log</span>(a)  <span class="cm">// a=0 frozen at mount</span>
+}, [])  <span class="cm">// ❌ a missing</span>
+
+<span class="cm">// Fix 1 — add a (Child re-renders when A changes)</span>
+}, [a])
+
+<span class="cm">// Fix 2 — useRef for stable ref + fresh value</span>
+<span class="kw">const</span> aRef = <span class="fn">useRef</span>(a)
+<span class="fn">useEffect</span>(() => { aRef.current = a }, [a])
+<span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(() => {
+  console.<span class="fn">log</span>(aRef.current)  <span class="cm">// always fresh ✅</span>
+}, [])  <span class="cm">// stable ✅</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q2</span>
+          <span class="q-text"
+            >useMemo creates new double on click, but callbackFn logs 0 always —
+            why?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// Mount: useMemo → "computing double" → double=0</span>
+<span class="cm">// useCallback created with double=0 (frozen)</span>
+
+<span class="cm">// Click Increment: count=1 → useMemo → "computing double" → double=2</span>
+<span class="cm">// useCallback NOT recreated ([] deps) → still has double=0</span>
+
+<span class="cm">// Click "Log double": logs "clicked: 0" — stale</span>
+
+<span class="cm">// Fix</span>
+<span class="kw">const</span> callbackFn = <span class="fn">useCallback</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'clicked:'</span>, double)
+}, [double])  <span class="cm">// ✅</span></code></pre>
+          <div class="lbl lw">Key Lesson</div>
+          <div class="pt w">
+            useMemo + useCallback with mismatched deps = layered stale closures
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q3</span>
+          <span class="q-text"
+            >What is a custom hook? Rules? Share logic not state?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Rules: start with "use", top level only, only inside React fn or custom hook</span>
+<span class="kw">function</span> <span class="fn">useCounter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(0)
+  <span class="kw">const</span> increment = <span class="fn">useCallback</span>(() => <span class="fn">setCount</span>(c => c + 1), [])
+  <span class="kw">return</span> { count, increment }
+}</code></pre>
+          <div class="lbl lw">CRITICAL — Hooks share LOGIC not STATE</div>
+          <div class="pt w">
+            ComponentA and ComponentB each calling useCounter() get INDEPENDENT
+            state
+          </div>
+          <div class="pt w">Changing count in A does NOT affect B</div>
+          <div class="pt w">
+            For shared state → use Context or state management library
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q4</span>
+          <span class="q-text"
+            >useForm hook — 2 bugs: stale closure in handleChange + unstable
+            initialValues</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="kw">function</span> <span class="fn">useForm</span>(initialValues) {
+  <span class="kw">const</span> [values, setValues] = <span class="fn">useState</span>(initialValues)
+  <span class="kw">const</span> initialRef = <span class="fn">useRef</span>(initialValues)  <span class="cm">// Bug 2 fix — freeze initial</span>
+
+  <span class="kw">const</span> handleChange = (e) => {
+    <span class="fn">setValues</span>(prev => ({  <span class="cm">// Bug 1 fix — functional updater</span>
+      ...prev,
+      [e.target.name]: e.target.value
+    }))
+  }
+
+  <span class="kw">const</span> reset = () => <span class="fn">setValues</span>(initialRef.current)  <span class="cm">// stable initial</span>
+
+  <span class="kw">return</span> { values, handleChange, reset }
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R2 Q5</span>
+          <span class="q-text"
+            >Context splitting — broken example + properly refactored with
+            memoized values</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// ❌ One context — theme change re-renders ALL consumers</span>
+<span class="tg">&lt;AppContext.Provider</span> value={{ user, theme }}<span class="tg">&gt;</span>
+
+<span class="cm">// ✅ Split + memoize</span>
+<span class="kw">function</span> <span class="fn">UserProvider</span>({ children }) {
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(null)
+  <span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ user, setUser }), [user])
+  <span class="kw">return</span> <span class="tg">&lt;UserContext.Provider</span> value={value}<span class="tg">&gt;</span>{children}<span class="tg">&lt;/UserContext.Provider&gt;</span>
+}
+
+<span class="kw">function</span> <span class="fn">ThemeProvider</span>({ children }) {
+  <span class="kw">const</span> [theme, setTheme] = <span class="fn">useState</span>(<span class="str">'dark'</span>)
+  <span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ theme, setTheme }), [theme])
+  <span class="cm">// setTheme is stable — React guarantees setter never changes</span>
+  <span class="kw">return</span> <span class="tg">&lt;ThemeContext.Provider</span> value={value}<span class="tg">&gt;</span>{children}<span class="tg">&lt;/ThemeContext.Provider&gt;</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="round-header">Round 3 — Coding Problems (4 Questions)</div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q1</span>
+          <span class="q-text"
+            >useTheme — context + custom hook + error if used outside
+            provider</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 10/10</span>
+          <pre><code><span class="kw">const</span> ThemeContext = <span class="fn">createContext</span>()
+
+<span class="kw">function</span> <span class="fn">ThemeProvider</span>({ children }) {
+  <span class="kw">const</span> [theme, setTheme] = <span class="fn">useState</span>(<span class="str">'light'</span>)
+  <span class="kw">const</span> toggleTheme = <span class="fn">useCallback</span>(() =>
+    <span class="fn">setTheme</span>(prev => prev === <span class="str">'light'</span> ? <span class="str">'dark'</span> : <span class="str">'light'</span>)
+  , [])
+  <span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ theme, toggleTheme }), [theme, toggleTheme])
+  <span class="kw">return</span> <span class="tg">&lt;ThemeContext.Provider</span> value={value}<span class="tg">&gt;</span>{children}<span class="tg">&lt;/ThemeContext.Provider&gt;</span>
+}
+
+<span class="kw">function</span> <span class="fn">useTheme</span>() {
+  <span class="kw">const</span> ctx = <span class="fn">useContext</span>(ThemeContext)
+  <span class="kw">if</span> (!ctx) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'useTheme must be used within ThemeProvider'</span>)
+  <span class="kw">return</span> ctx
+}
+
+<span class="cm">// Usage</span>
+<span class="kw">function</span> <span class="fn">Header</span>() {
+  <span class="kw">const</span> { theme, toggleTheme } = <span class="fn">useTheme</span>()
+  <span class="kw">return</span> (
+    <span class="tg">&lt;div</span> style={{ background: theme === <span class="str">'light'</span> ? <span class="str">'#fff'</span> : <span class="str">'#333'</span> }}<span class="tg">&gt;</span>
+      <span class="tg">&lt;p&gt;</span>Theme: {theme}<span class="tg">&lt;/p&gt;</span>
+      <span class="tg">&lt;button</span> onClick={toggleTheme}<span class="tg">&gt;</span>Toggle<span class="tg">&lt;/button&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q2</span>
+          <span class="q-text"
+            >useArray — push, remove, update, clear, reset</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="kw">export function</span> <span class="fn">useArray</span>(initialValue) {
+  <span class="kw">const</span> [arr, setArr] = <span class="fn">useState</span>([...initialValue])
+  <span class="kw">const</span> initialRef = <span class="fn">useRef</span>([...initialValue])
+
+  <span class="kw">const</span> push = item => <span class="fn">setArr</span>(prev => [...prev, item])
+  <span class="kw">const</span> remove = index => <span class="fn">setArr</span>(prev => prev.<span class="fn">filter</span>((_, i) => i !== index))
+  <span class="kw">const</span> update = (index, item) =>
+    <span class="fn">setArr</span>(prev => prev.<span class="fn">map</span>((el, i) => i === index ? item : el))
+  <span class="kw">const</span> clear = () => <span class="fn">setArr</span>([])
+  <span class="kw">const</span> reset = () => <span class="fn">setArr</span>([...initialRef.current])
+
+  <span class="kw">return</span> { arr, push, remove, update, clear, reset }
+}</code></pre>
+          <div class="lbl lw">Missed in interview</div>
+          <div class="pt w">
+            update() function was missing — always re-read all requirements
+            before submitting
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q3</span>
+          <span class="q-text"
+            >useReducer shopping cart — ADD, REMOVE, UPDATE_QUANTITY, CLEAR +
+            useMemo total</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="cm">// Reducer OUTSIDE component</span>
+<span class="kw">function</span> <span class="fn">cartReducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">'ADD_ITEM'</span>: {
+      <span class="kw">const</span> exists = state.<span class="fn">find</span>(i => i.id === action.payload.id)
+      <span class="kw">if</span> (exists) <span class="kw">return</span> state.<span class="fn">map</span>(i =>
+        i.id === action.payload.id ? { ...i, quantity: i.quantity + 1 } : i)
+      <span class="kw">return</span> [...state, { ...action.payload, quantity: 1 }]
+    }
+    <span class="kw">case</span> <span class="str">'REMOVE_ITEM'</span>:
+      <span class="kw">return</span> state.<span class="fn">filter</span>(i => i.id !== action.payload)
+    <span class="kw">case</span> <span class="str">'UPDATE_QUANTITY'</span>:
+      <span class="kw">return</span> state.<span class="fn">map</span>(i =>
+        i.id === action.payload.id
+          ? { ...i, quantity: Math.<span class="fn">max</span>(1, action.payload.quantity) }
+          : i)
+    <span class="kw">case</span> <span class="str">'CLEAR_CART'</span>:
+      <span class="kw">return</span> []
+    <span class="kw">default</span>:
+      <span class="kw">return</span> state
+  }
+}
+
+<span class="kw">function</span> <span class="fn">Cart</span>() {
+  <span class="kw">const</span> [cart, dispatch] = <span class="fn">useReducer</span>(cartReducer, [])
+  <span class="kw">const</span> total = <span class="fn">useMemo</span>(() =>
+    cart.<span class="fn">reduce</span>((sum, item) => sum + item.price * item.quantity, 0)
+  , [cart])
+  <span class="cm">// dispatch({ type: 'ADD_ITEM', payload: { id: 1, name: 'Shoes', price: 100 } })</span>
+  <span class="cm">// dispatch({ type: 'REMOVE_ITEM', payload: item.id })</span>
+  <span class="cm">// dispatch({ type: 'UPDATE_QUANTITY', payload: { id: item.id, quantity: item.quantity + 1 } })</span>
+  <span class="cm">// dispatch({ type: 'CLEAR_CART' })</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R3 Q4</span>
+          <span class="q-text"
+            >useMultiStep — next, back, goTo, isFirst, isLast + 3 step
+            form</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9.5/10</span>
+          <pre><code><span class="kw">export function</span> <span class="fn">useMultiStep</span>(steps) {
+  <span class="kw">const</span> [currentStep, setCurrentStep] = <span class="fn">useState</span>(0)
+
+  <span class="kw">const</span> next = () =>
+    <span class="fn">setCurrentStep</span>(prev => prev < steps.length - 1 ? prev + 1 : prev)
+  <span class="kw">const</span> back = () =>
+    <span class="fn">setCurrentStep</span>(prev => prev > 0 ? prev - 1 : prev)
+  <span class="kw">const</span> goTo = step => {
+    <span class="kw">if</span> (step >= 0 && step <= steps.length - 1) <span class="fn">setCurrentStep</span>(step)
+  }
+
+  <span class="kw">return</span> {
+    currentStep,
+    step: steps[currentStep],
+    next, back, goTo,
+    isFirst: currentStep === 0,
+    isLast: currentStep === steps.length - 1
+  }
+}</code></pre>
+          <div class="lbl lw">Remember</div>
+          <div class="pt w">
+            Show Submit button on last step — not just disabled Next
+          </div>
+          <div class="pt w">
+            Use functional updater form in next/back (already done correctly)
+          </div>
+        </div>
+      </div>
+
+      <div class="round-header">
+        Round 4 — Mixed Theory + Coding + Tricky (4 Questions)
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q1</span>
+          <span class="q-text"
+            >Is memoization always good? When does useMemo make performance
+            WORSE?</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 8/10</span>
+          <pre><code><span class="cm">// ❌ Trivial calculation — overhead > benefit</span>
+<span class="kw">const</span> double = <span class="fn">useMemo</span>(() => count * 2, [count])
+<span class="cm">// Just: const double = count * 2</span>
+
+<span class="cm">// ❌ Dep changes every render — memo never caches</span>
+<span class="kw">const</span> obj = { id: 1 }  <span class="cm">// new ref every render</span>
+<span class="kw">const</span> result = <span class="fn">useMemo</span>(() => <span class="fn">compute</span>(obj), [obj])  <span class="cm">// recomputes anyway</span>
+
+<span class="cm">// ❌ useCallback when child isn't React.memo'd — useless</span>
+<span class="kw">const</span> fn = <span class="fn">useCallback</span>(() => {}, [])
+<span class="cm">// If Child isn't wrapped in React.memo — this does nothing useful</span></code></pre>
+          <div class="lbl lw">Rule</div>
+          <div class="pt w">
+            Profile first, optimize second. Memoization is not free — use it
+            only when you've measured a real problem.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q2</span>
+          <span class="q-text"
+            >useMemo + useCallback mismatched deps — always logs 0 — two layer
+            stale closure</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 7/10</span>
+          <pre><code><span class="cm">// Every click logs "clicked: 0" even though double on screen updates</span>
+<span class="cm">// Layer 1: callbackFn has [] deps — memoValue reference frozen at mount</span>
+<span class="cm">// Layer 2: useMemo creates new memoValue but callbackFn never sees new ref</span>
+
+<span class="cm">// Timeline:</span>
+<span class="cm">// Mount:   memoValue={count:0} → callbackFn captures THIS ref</span>
+<span class="cm">// Click 1: memoValue={count:1} NEW object — callbackFn still has old ref</span>
+<span class="cm">// Click 2: memoValue={count:2} NEW object — callbackFn still has old ref</span>
+
+<span class="cm">// Fix</span>
+<span class="kw">const</span> callbackFn = <span class="fn">useCallback</span>(() => {
+  console.<span class="fn">log</span>(memoValue.count)
+}, [memoValue])  <span class="cm">// ✅</span></code></pre>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q3</span>
+          <span class="q-text"
+            >UserList — 3 bugs: mutation + no useMemo + inline onClick</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sh">Score: 9/10</span>
+          <pre><code><span class="cm">// Bug 1 — users.sort() MUTATES original array in place (silent, dangerous)</span>
+<span class="cm">// Bug 2 — no useMemo — sorts on every render</span>
+<span class="cm">// Bug 3 — inline onClick — new function per item per render</span>
+
+<span class="cm">// ✅ Complete fix</span>
+<span class="kw">const</span> ListItem = React.<span class="fn">memo</span>(({ user, onSelect }) => (
+  <span class="tg">&lt;li</span> onClick={() => <span class="fn">onSelect</span>(user)}<span class="tg">&gt;</span>{user.name}<span class="tg">&lt;/li&gt;</span>
+))
+
+<span class="kw">function</span> <span class="fn">UserList</span>({ users, onSelectUser }) {
+  <span class="kw">const</span> sortedUsers = <span class="fn">useMemo</span>(() =>
+    [...users].<span class="fn">sort</span>((a, b) => a.name.<span class="fn">localeCompare</span>(b.name))  <span class="cm">// spread first!</span>
+  , [users])
+
+  <span class="kw">const</span> handleSelect = <span class="fn">useCallback</span>(user => {
+    <span class="fn">onSelectUser</span>(user)
+  }, [onSelectUser])
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;ul&gt;</span>
+      {sortedUsers.<span class="fn">map</span>(user => (
+        <span class="tg">&lt;ListItem</span> key={user.id} user={user} onSelect={handleSelect} <span class="tg">/&gt;</span>
+      ))}
+    <span class="tg">&lt;/ul&gt;</span>
+  )
+}</code></pre>
+          <div class="lbl lw">
+            Mutation is the most dangerous bug — silent, no errors, wrong
+            behavior
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header" onclick="toggle(this)">
+          <span class="q-num">R4 Q4</span>
+          <span class="q-text"
+            >React.lazy + Suspense + Error Boundary for heavy dashboard</span
+          >
+          <span class="icon">▾</span>
+        </div>
+        <div class="qa-body">
+          <span class="score sm">Score: 6/10</span>
+          <div class="lbl lw">What was missed</div>
+          <div class="pt w">
+            Each lazy component must be in its OWN file — different files =
+            different code chunks
+          </div>
+          <div class="pt w">
+            Suspense does NOT catch load failures — need Error Boundary
+          </div>
+          <div class="pt w">
+            Error Boundary MUST be a class component — no hook equivalent
+          </div>
+          <pre><code><span class="cm">// Each in its OWN file</span>
+<span class="kw">const</span> Analytics = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Analytics'</span>))
+<span class="kw">const</span> Revenue = React.<span class="fn">lazy</span>(() => <span class="kw">import</span>(<span class="str">'./Revenue'</span>))
+
+<span class="cm">// Error Boundary — class component only</span>
+<span class="kw">class</span> <span class="fn">ErrorBoundary</span> <span class="kw">extends</span> React.Component {
+  state = { hasError: <span class="kw">false</span> }
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>() { <span class="kw">return</span> { hasError: <span class="kw">true</span> } }
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.state.hasError) <span class="kw">return</span> <span class="tg">&lt;p&gt;</span>Failed. Refresh.<span class="tg">&lt;/p&gt;</span>
+    <span class="kw">return this</span>.props.children
+  }
+}
+
+<span class="cm">// Wrap each lazy component</span>
+<span class="tg">&lt;ErrorBoundary&gt;</span>
+  <span class="tg">&lt;Suspense</span> fallback={<span class="tg">&lt;p&gt;</span>Loading...<span class="tg">&lt;/p&gt;</span>}<span class="tg">&gt;</span>
+    <span class="tg">&lt;Analytics</span> <span class="tg">/&gt;</span>
+  <span class="tg">&lt;/Suspense&gt;</span>
+<span class="tg">&lt;/ErrorBoundary&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="weak-box">
+        <h3>Day 3 — Weak Areas to Revise</h3>
+        <div class="wi">
+          Referential equality — say it explicitly as root cause of
+          useMemo/useCallback
+        </div>
+        <div class="wi">
+          React.memo custom comparator — second argument (prevProps, nextProps)
+          => boolean
+        </div>
+        <div class="wi">
+          Always useMemo Provider value — even after context splitting
+        </div>
+        <div class="wi">
+          Custom hooks share LOGIC not STATE — each call creates independent
+          state
+        </div>
+        <div class="wi">
+          Error Boundaries — class component only, must pair with Suspense for
+          lazy loading
+        </div>
+        <div class="wi">
+          React.lazy — each component needs its OWN file for real code splitting
+        </div>
+        <div class="wi">
+          Zustand granular subscriptions vs Context — Context cannot subscribe
+          to state slices
+        </div>
+        <div class="wi">
+          Always re-read all requirements before submitting — missed update() in
+          useArray
+        </div>
+      </div>
+    </div>
+    <script>
+      function toggle(h) {
+        h.parentElement.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

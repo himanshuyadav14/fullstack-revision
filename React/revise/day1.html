@@ -1,0 +1,1241 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React Interview — Day 1</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        line-height: 1.7;
+      }
+      .header {
+        background: #1a1a1a;
+        border-bottom: 1px solid #2a2a2a;
+        padding: 20px 28px;
+      }
+      .header h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .header p {
+        color: #888;
+        font-size: 14px;
+        margin-top: 4px;
+      }
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 24px;
+      }
+      .round-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6366f1;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin: 40px 0 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #2a2a2a;
+      }
+      .card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 12px;
+        margin-bottom: 14px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 16px 20px;
+        cursor: pointer;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .card-header:hover {
+        background: #222;
+      }
+      .qnum {
+        background: #6366f1;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 5px;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+      .qtxt {
+        font-size: 15px;
+        color: #fff;
+        font-weight: 500;
+        flex: 1;
+      }
+      .arrow {
+        color: #555;
+        font-size: 16px;
+        flex-shrink: 0;
+        transition: transform 0.2s;
+        margin-top: 2px;
+      }
+      .card.open .arrow {
+        transform: rotate(180deg);
+      }
+      .card-body {
+        display: none;
+        padding: 4px 20px 20px;
+        border-top: 1px solid #2a2a2a;
+      }
+      .card.open .card-body {
+        display: block;
+      }
+      .score {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 12px 0 10px;
+      }
+      .s-high {
+        background: #1a3a1a;
+        color: #4ade80;
+        border: 1px solid #2a5a2a;
+      }
+      .s-mid {
+        background: #3a2e00;
+        color: #fbbf24;
+        border: 1px solid #5a4500;
+      }
+      .s-low {
+        background: #3a1a1a;
+        color: #f87171;
+        border: 1px solid #5a2a2a;
+      }
+      .lbl {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 14px 0 6px;
+      }
+      .lbl-g {
+        color: #4ade80;
+      }
+      .lbl-w {
+        color: #fbbf24;
+      }
+      .lbl-b {
+        color: #818cf8;
+      }
+      .pt {
+        font-size: 14px;
+        color: #ccc;
+        padding: 5px 0 5px 14px;
+        border-left: 2px solid #333;
+        margin-bottom: 5px;
+      }
+      .pt-g {
+        border-left-color: #4ade80;
+      }
+      .pt-w {
+        border-left-color: #fbbf24;
+      }
+      .ans {
+        font-size: 14px;
+        color: #ccc;
+        margin: 8px 0;
+      }
+      pre {
+        background: #0d0d0d;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 16px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: "Fira Code", monospace;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .kw {
+        color: #c084fc;
+      }
+      .fn {
+        color: #60a5fa;
+      }
+      .str {
+        color: #34d399;
+      }
+      .cm {
+        color: #555;
+        font-style: italic;
+      }
+      .tag {
+        color: #f87171;
+      }
+      .weak {
+        background: #1e1a00;
+        border: 1px solid #3a3000;
+        border-radius: 10px;
+        padding: 18px;
+        margin-top: 32px;
+      }
+      .weak h3 {
+        color: #fbbf24;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 12px;
+      }
+      .wi {
+        font-size: 13px;
+        color: #ccc;
+        padding: 5px 0 5px 14px;
+        border-left: 2px solid #fbbf24;
+        margin-bottom: 6px;
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .scard {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+      }
+      .scard .sl {
+        font-size: 11px;
+        color: #666;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .scard .sv {
+        font-size: 20px;
+        font-weight: 700;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>⚛️ React Interview — Day 1</h1>
+      <p>
+        What is React · JSX · Components · Props · State · Re-renders | 4 Rounds
+        · 76.5%
+      </p>
+    </div>
+    <div class="container">
+      <div class="summary">
+        <div class="scard">
+          <div class="sl">Round 1</div>
+          <div class="sv">47.5/70</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 2</div>
+          <div class="sv">41.5/60</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 3</div>
+          <div class="sv">43/50</div>
+        </div>
+        <div class="scard">
+          <div class="sl">Round 4</div>
+          <div class="sv">44/50</div>
+        </div>
+      </div>
+
+      <!-- ROUND 1 -->
+      <div class="round-title">Round 1 — Theory Fundamentals</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >What is React? Why was it created? What problem does it solve over
+            vanilla JavaScript?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6.5/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            React is a JavaScript library by Meta, built for UIs especially SPAs
+          </div>
+          <div class="pt pt-g">
+            Reusable components — navbar, footer, sidebar each with own logic
+            and state
+          </div>
+          <div class="pt pt-g">
+            DOM manipulation in vanilla JS is slow and messy at scale
+          </div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            Virtual DOM — React diffs lightweight JS copy, only updates changed
+            parts (reconciliation)
+          </div>
+          <div class="pt pt-w">
+            Declarative vs Imperative — vanilla JS = HOW to update, React = WHAT
+            UI should look like
+          </div>
+          <div class="pt pt-w">
+            One-way data flow — UI is always a function of state
+          </div>
+          <div class="lbl lbl-b">✅ Complete Answer</div>
+          <p class="ans">
+            React is a declarative UI library that uses a Virtual DOM and
+            component-based architecture to efficiently sync UI with state —
+            solving the performance and maintainability problems of manual DOM
+            manipulation in vanilla JS.
+          </p>
+          <pre><code><span class="cm">// Imperative (Vanilla JS) — tells HOW</span>
+<span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">'count'</span>)
+el.innerText = count + <span class="str">1</span>
+
+<span class="cm">// Declarative (React) — describes WHAT</span>
+<span class="tag">&lt;h1&gt;</span>{count}<span class="tag">&lt;/h1&gt;</span>
+
+<span class="cm">// Virtual DOM flow:</span>
+<span class="cm">// setState → new VDOM → diff old vs new → update only changed real DOM nodes</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >What is JSX? Is it valid JavaScript? How does it work under the
+            hood?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            JSX = JavaScript XML — HTML-like syntax, not actual HTML
+          </div>
+          <div class="pt pt-g">
+            Babel compiles it — browser can't run JSX directly
+          </div>
+          <div class="pt pt-g">Creates React elements → Virtual DOM</div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            Babel compiles JSX → React.createElement() calls specifically
+          </div>
+          <div class="pt pt-w">
+            JSX is NOT valid JS either — it's a syntax extension requiring a
+            build tool
+          </div>
+          <div class="pt pt-w">
+            Single root element rule — must wrap in &lt;div&gt; or Fragment
+            &lt;&gt;&lt;/&gt;
+          </div>
+          <div class="lbl lbl-b">✅ Complete Answer</div>
+          <pre><code><span class="cm">// JSX</span>
+<span class="kw">const</span> el = <span class="tag">&lt;h1</span> className=<span class="str">"title"</span><span class="tag">&gt;</span>Hello<span class="tag">&lt;/h1&gt;</span>
+
+<span class="cm">// After Babel compiles:</span>
+<span class="kw">const</span> el = React.<span class="fn">createElement</span>(<span class="str">'h1'</span>, { className: <span class="str">'title'</span> }, <span class="str">'Hello'</span>)
+
+<span class="cm">// Returns plain JS object (Virtual DOM node):</span>
+{ type: <span class="str">'h1'</span>, props: { className: <span class="str">'title'</span>, children: <span class="str">'Hello'</span> } }
+
+<span class="cm">// Single root rule:</span>
+<span class="cm">// ❌ return &lt;h1&gt;A&lt;/h1&gt;&lt;p&gt;B&lt;/p&gt;</span>
+<span class="cm">// ✅ return &lt;&gt;&lt;h1&gt;A&lt;/h1&gt;&lt;p&gt;B&lt;/p&gt;&lt;/&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >What is the difference between a controlled and uncontrolled
+            component?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-low">5/10</div>
+          <div class="lbl lbl-w">⚠️ You Got This Wrong Initially</div>
+          <div class="pt pt-w">
+            This is SPECIFICALLY about form inputs — not conditional rendering
+            or prop passing
+          </div>
+          <div class="pt pt-w">
+            Controlled = React state is the source of truth for input value
+          </div>
+          <div class="pt pt-w">
+            Uncontrolled = DOM manages its own value, read via useRef on demand
+          </div>
+          <div class="lbl lbl-b">✅ Complete Answer</div>
+          <pre><code><span class="cm">// Controlled — React owns value, every keystroke updates state</span>
+<span class="kw">function</span> <span class="fn">ControlledInput</span>() {
+  <span class="kw">const</span> [value, setValue] = <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">return</span> <span class="tag">&lt;input</span> value={value} onChange={e => <span class="fn">setValue</span>(e.target.value)} <span class="tag">/&gt;</span>
+}
+
+<span class="cm">// Uncontrolled — DOM owns value, read only when needed</span>
+<span class="kw">function</span> <span class="fn">UncontrolledInput</span>() {
+  <span class="kw">const</span> inputRef = <span class="fn">useRef</span>()
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = () => console.<span class="fn">log</span>(inputRef.current.value)
+  <span class="kw">return</span> <span class="tag">&lt;input</span> ref={inputRef} <span class="tag">/&gt;</span>
+}</code></pre>
+          <div class="pt pt-w">
+            File inputs (&lt;input type="file"&gt;) are ALWAYS uncontrolled
+          </div>
+          <div class="pt pt-w">
+            Removing onChange from controlled input makes it read-only
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >What are props? Can a child modify them? Why or why not?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7.5/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            Props are like function parameters — passed from parent to child
+          </div>
+          <div class="pt pt-g">
+            Props are immutable — child cannot modify them
+          </div>
+          <div class="pt pt-g">
+            When parent re-renders, child re-renders too
+          </div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            WHY props are immutable: React follows one-way data flow. If child
+            could modify props, parent's data would change unexpectedly →
+            unpredictable bugs
+          </div>
+          <div class="pt pt-w">
+            To "change" something: parent passes callback as prop, child calls
+            it
+          </div>
+          <div class="pt pt-w">
+            props.children — whatever is placed between opening/closing tags
+          </div>
+          <div class="lbl lbl-b">✅ Callback Pattern</div>
+          <pre><code><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="str">0</span>)
+  <span class="kw">return</span> <span class="tag">&lt;Child</span> onIncrement={() => <span class="fn">setCount</span>(c => c + <span class="str">1</span>)} <span class="tag">/&gt;</span>
+}
+<span class="kw">function</span> <span class="fn">Child</span>({ onIncrement }) {
+  <span class="kw">return</span> <span class="tag">&lt;button</span> onClick={onIncrement}<span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>
+}
+
+<span class="cm">// props.children example:</span>
+<span class="kw">function</span> <span class="fn">Card</span>({ children }) {
+  <span class="kw">return</span> <span class="tag">&lt;div</span> className=<span class="str">"card"</span><span class="tag">&gt;</span>{children}<span class="tag">&lt;/div&gt;</span>
+}
+<span class="tag">&lt;Card&gt;&lt;p&gt;</span>Hello<span class="tag">&lt;/p&gt;&lt;/Card&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >What is state? How is it different from props? Why can't you use a
+            regular JS variable?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            State is local mutable data inside a component
+          </div>
+          <div class="pt pt-g">
+            Regular variables don't trigger re-render when changed
+          </div>
+          <div class="pt pt-g">useState tells React when to update the UI</div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            WHY regular variable fails: React calls the component function again
+            on every render — regular variable RESETS to initial value every
+            time
+          </div>
+          <div class="pt pt-w">
+            useState stores value OUTSIDE the function in React's Fiber tree —
+            survives re-renders
+          </div>
+          <div class="pt pt-w">
+            State updates are ASYNC — console.log after setState shows old value
+          </div>
+          <div class="lbl lbl-b">✅ Three-Way Comparison</div>
+          <pre><code><span class="cm">// Regular variable — resets on every render ❌</span>
+<span class="kw">let</span> count = <span class="str">0</span>
+
+<span class="cm">// useState — persists + triggers re-render ✅</span>
+<span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="str">0</span>)
+
+<span class="cm">// Async gotcha:</span>
+<span class="fn">setCount</span>(count + <span class="str">1</span>)
+console.<span class="fn">log</span>(count) <span class="cm">// still old value — state updates after re-render</span>
+
+<span class="cm">// Difference in one line:</span>
+<span class="cm">// Props = from outside, read-only</span>
+<span class="cm">// State = lives inside, can change over time</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q6</span>
+          <span class="qtxt"
+            >setCount called 3 times — why is result 1 not 3? How to fix?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">Answer is 1 — React batches state updates</div>
+          <div class="pt pt-g">
+            All 3 calls read stale count=0 → all are setCount(1)
+          </div>
+          <div class="pt pt-g">
+            Fix: functional updater form prev => prev + 1
+          </div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            Explain WHY functional form works: each call receives the latest
+            QUEUED value, not the stale closure value
+          </div>
+          <div class="lbl lbl-b">✅ Complete Answer</div>
+          <pre><code><span class="cm">// ❌ All read stale count=0 → result: 1</span>
+<span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// setCount(1)</span>
+<span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// setCount(1)</span>
+<span class="fn">setCount</span>(count + <span class="str">1</span>) <span class="cm">// setCount(1)</span>
+
+<span class="cm">// ✅ Each gets latest queued value → result: 3</span>
+<span class="fn">setCount</span>(prev => prev + <span class="str">1</span>) <span class="cm">// 0 → 1</span>
+<span class="fn">setCount</span>(prev => prev + <span class="str">1</span>) <span class="cm">// 1 → 2</span>
+<span class="fn">setCount</span>(prev => prev + <span class="str">1</span>) <span class="cm">// 2 → 3</span>
+
+<span class="cm">// Rule: if new state depends on previous state → ALWAYS use functional form</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q7</span>
+          <span class="qtxt"
+            >What triggers a re-render in React? List everything.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6.5/10</div>
+          <div class="lbl lbl-w">⚠️ You Only Listed 2 of 5</div>
+          <div class="lbl lbl-b">✅ All 5 Re-render Triggers</div>
+          <div class="pt pt-g">
+            1. State change — setState / useState setter called
+          </div>
+          <div class="pt pt-g">
+            2. Props change — parent passes new/different prop value
+          </div>
+          <div class="pt pt-g">
+            3. Parent re-renders — even if child props are identical
+          </div>
+          <div class="pt pt-g">
+            4. Context value changes — any consumer of that context re-renders
+          </div>
+          <div class="pt pt-g">5. forceUpdate (class components only)</div>
+          <div class="lbl lbl-w">⚠️ Critical Gotcha</div>
+          <div class="pt pt-w">
+            Child re-renders when parent re-renders EVEN IF its props didn't
+            change — this is why React.memo exists
+          </div>
+          <pre><code><span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="str">0</span>)
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;button</span> onClick={() => <span class="fn">setCount</span>(c => c+<span class="str">1</span>)}<span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;Child</span> <span class="tag">/&gt;</span> <span class="cm">{/* re-renders on every click even with no props */}</span>
+    <span class="tag">&lt;/&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 2 -->
+      <div class="round-title">Round 2 — Theory + Output Questions</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >What is the Virtual DOM? Walk through the full flow from state
+            change to screen update.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            Virtual DOM is lightweight JS representation of real DOM
+          </div>
+          <div class="pt pt-g">
+            React diffs new vs old VDOM — only updates changed parts
+          </div>
+          <div class="pt pt-g">Process is called reconciliation</div>
+          <div class="lbl lbl-w">
+            ⚠️ What Was Missing — Full Step-by-Step Flow
+          </div>
+          <pre><code><span class="str">1.</span> setState() called
+<span class="str">2.</span> React creates NEW Virtual DOM tree (re-renders in memory)
+<span class="str">3.</span> React DIFFS new vs previous Virtual DOM (reconciliation)
+<span class="str">4.</span> Calculates minimum set of changes (patch)
+<span class="str">5.</span> ReactDOM applies ONLY those changes to real DOM
+<span class="str">6.</span> Browser repaints screen</code></pre>
+          <div class="pt pt-w">
+            Diffing Rule 1: Different element types → destroy subtree and
+            rebuild
+          </div>
+          <div class="pt pt-w">
+            Diffing Rule 2: Keys identify which list items changed
+          </div>
+          <div class="pt pt-w">
+            Real DOM is expensive (triggers layout+paint+reflow). VDOM = plain
+            JS objects = cheap
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >What is the key prop? Why is index as key unsafe?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            Key uniquely identifies elements for React's diffing
+          </div>
+          <div class="pt pt-g">
+            Index as key is unsafe when list items can be
+            added/removed/reordered
+          </div>
+          <div class="lbl lbl-w">⚠️ What Was Missing</div>
+          <div class="pt pt-w">
+            Concrete broken example — deleting 'Apple' shifts all indices, React
+            re-renders wrong items
+          </div>
+          <div class="pt pt-w">
+            Input state bug — typed values shift to wrong items when index keys
+            are used
+          </div>
+          <div class="pt pt-w">
+            When index IS safe: static list, never reordered/deleted, items have
+            no internal state
+          </div>
+          <pre><code><span class="cm">// ❌ Index key — breaks when deleting items</span>
+<span class="cm">// ['Apple','Banana','Cherry'] → delete Apple</span>
+<span class="cm">// → ['Banana','Cherry'] but React sees key=0 changed Apple→Banana</span>
+<span class="cm">// Re-renders ALL items instead of just removing one</span>
+
+<span class="cm">// ✅ Always use stable unique ID</span>
+users.<span class="fn">map</span>(user => <span class="tag">&lt;UserCard</span> key={user.id} user={user} <span class="tag">/&gt;</span>)</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >setCount(0) when count is already 0 — does 'render' log? Does UI
+            update?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">6/10</div>
+          <div class="lbl lbl-w">⚠️ You Said "Nothing Happens" — Wrong</div>
+          <div class="lbl lbl-b">
+            ✅ Correct Answer — Bails Out After One Re-render
+          </div>
+          <div class="pt pt-g">
+            First click: component re-renders ONCE ('render' IS logged), then
+            React bails out
+          </div>
+          <div class="pt pt-g">
+            Subsequent clicks: React bails out immediately, no re-render at all
+          </div>
+          <div class="pt pt-g">
+            React uses Object.is(0, 0) = true to determine bail out
+          </div>
+          <pre><code><span class="cm">// React internally does:</span>
+<span class="kw">if</span> (Object.<span class="fn">is</span>(currentState, newState)) {
+  <span class="cm">// bail out after first re-render</span>
+}
+
+<span class="cm">// This is an interview trap — neither "nothing" nor "always re-renders"</span>
+<span class="cm">// Correct: re-renders once, then bails out</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >Component lifecycle in functional components — three phases</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7.5/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            Three phases: mounting, updating, unmounting
+          </div>
+          <div class="pt pt-g">
+            useEffect handles all three with different dependency configs
+          </div>
+          <div class="lbl lbl-w">⚠️ You Didn't Show the Code Mapping</div>
+          <pre><code><span class="cm">// MOUNTING — runs once after first render</span>
+<span class="fn">useEffect</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'mounted'</span>)
+}, [])
+
+<span class="cm">// UPDATING — runs when specific value changes</span>
+<span class="fn">useEffect</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'count changed'</span>)
+}, [count])
+
+<span class="cm">// UNMOUNTING — cleanup function</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> timer = <span class="fn">setInterval</span>(() => {}, <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(timer) <span class="cm">// ← runs on unmount</span>
+}, [])
+
+<span class="cm">// Real cleanup use cases:</span>
+<span class="cm">// clearTimeout, removeEventListener, controller.abort(), socket.unsubscribe()</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >useEffect fetch — what bugs exist and how to fix?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ You Missed the Biggest Bug — Memory Leak
+          </div>
+          <div class="pt pt-w">
+            Setting state on unmounted component → memory leak warning
+          </div>
+          <div class="pt pt-w">
+            Fix with AbortController — MUST pass signal to fetch
+          </div>
+          <div class="pt pt-w">
+            res.ok check — fetch does NOT throw on 404/500
+          </div>
+          <div class="pt pt-w">Ignore AbortError in catch</div>
+          <div class="lbl lbl-b">✅ Production-Ready Pattern</div>
+          <pre><code><span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+
+  <span class="fn">fetch</span>(url, { signal: controller.signal }) <span class="cm">// ← ALWAYS pass signal</span>
+    .<span class="fn">then</span>(res => {
+      <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>) <span class="cm">// ← check res.ok</span>
+      <span class="kw">return</span> res.<span class="fn">json</span>()
+    })
+    .<span class="fn">then</span>(data => <span class="fn">setData</span>(data))
+    .<span class="fn">catch</span>(err => {
+      <span class="kw">if</span> (err.name === <span class="str">'AbortError'</span>) <span class="kw">return</span> <span class="cm">// ← ignore abort</span>
+      <span class="fn">setError</span>(err.message)
+    })
+    .<span class="fn">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+
+  <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+}, [])</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q6</span>
+          <span class="qtxt"
+            >useEffect — no deps array vs [] vs [count] — what does each
+            do?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">8/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">No array = runs after every render</div>
+          <div class="pt pt-g">Empty array = runs once after mount</div>
+          <div class="pt pt-g">
+            With deps = runs on mount + when deps change
+          </div>
+          <pre><code><span class="fn">useEffect</span>(() => {})           <span class="cm">// A — after EVERY render (rare, careful)</span>
+<span class="fn">useEffect</span>(() => {}, [])       <span class="cm">// B — ONCE after mount (fetch, listeners)</span>
+<span class="fn">useEffect</span>(() => {}, [count])  <span class="cm">// C — mount + when count changes</span>
+
+<span class="cm">// Infinite loop trap:</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="fn">setData</span>(something) <span class="cm">// ❌ infinite loop — no deps array</span>
+})
+
+<span class="cm">// Stale closure trap:</span>
+<span class="fn">useEffect</span>(() => {
+  console.<span class="fn">log</span>(count) <span class="cm">// always logs initial value</span>
+}, []) <span class="cm">// ← count missing from deps = stale closure bug</span></code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 3 -->
+      <div class="round-title">Round 3 — Coding Problems</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >Counter — increment, decrement, reset. Count never below 0.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-w">⚠️ Minor Issues</div>
+          <div class="pt pt-w">Use === not == (strict equality always)</div>
+          <div class="pt pt-w">
+            Don't import unused hooks (useEffect was imported but unused)
+          </div>
+          <div class="lbl lbl-b">✅ Clean Solution</div>
+          <pre><code><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="str">0</span>)
+
+  <span class="kw">const</span> <span class="fn">handleDecrement</span> = () => {
+    <span class="kw">if</span> (count === <span class="str">0</span>) <span class="kw">return</span>  <span class="cm">// ✅ use ===</span>
+    <span class="fn">setCount</span>(prev => prev - <span class="str">1</span>)
+  }
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;p&gt;</span>{count}<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;button</span> onClick={<span class="fn">handleDecrement</span>}<span class="tag">&gt;</span>Decrement<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;button</span> onClick={() => <span class="fn">setCount</span>(prev => prev + <span class="str">1</span>)}<span class="tag">&gt;</span>Increment<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;button</span> onClick={() => <span class="fn">setCount</span>(<span class="str">0</span>)}<span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >Todo list — add, delete, empty validation, "No todos yet"</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9.5/10</div>
+          <div class="lbl lbl-w">⚠️ Minor Improvements</div>
+          <div class="pt pt-w">
+            Use functional updater: setTodos(prev => [...prev, newTodo])
+          </div>
+          <div class="pt pt-w">
+            onChange={(e) => handleChange(e)} → simplify to
+            onChange={handleChange}
+          </div>
+          <div class="lbl lbl-b">✅ Complete Solution</div>
+          <pre><code><span class="kw">const</span> <span class="fn">ToDo</span> = ({ todo, onDelete }) => (
+  <span class="tag">&lt;div&gt;</span>
+    <span class="tag">&lt;span&gt;</span>{todo.name}<span class="tag">&lt;/span&gt;</span>
+    <span class="tag">&lt;button</span> onClick={() => <span class="fn">onDelete</span>(todo.id)}<span class="tag">&gt;</span>Delete<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+)
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [todos, setTodos] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [input, setInput] = <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="kw">const</span> <span class="fn">handleAdd</span> = () => {
+    <span class="kw">if</span> (!input.<span class="fn">trim</span>()) <span class="kw">return</span>
+    <span class="fn">setTodos</span>(prev => [...prev, { id: <span class="fn">Date.now</span>(), name: input }]) <span class="cm">// functional updater ✅</span>
+    <span class="fn">setInput</span>(<span class="str">''</span>)
+  }
+  <span class="kw">const</span> <span class="fn">handleDelete</span> = id => <span class="fn">setTodos</span>(prev => prev.<span class="fn">filter</span>(t => t.id !== id))
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;input</span> value={input} onChange={<span class="fn">handleChange</span>} <span class="tag">/&gt;</span> <span class="cm">{/* simplified ✅ */}</span>
+      <span class="tag">&lt;button</span> disabled={!input.<span class="fn">trim</span>()} onClick={<span class="fn">handleAdd</span>}<span class="tag">&gt;</span>Add<span class="tag">&lt;/button&gt;</span>
+      {todos.length === <span class="str">0</span>
+        ? <span class="tag">&lt;p&gt;</span>No todos yet<span class="tag">&lt;/p&gt;</span>
+        : todos.<span class="fn">map</span>(todo => <span class="tag">&lt;ToDo</span> key={todo.id} todo={todo} onDelete={<span class="fn">handleDelete</span>} <span class="tag">/&gt;</span>)
+      }
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >Fetch users from API — loading, error, cleanup</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">8/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ You Created AbortController But Forgot to Pass Signal
+          </div>
+          <pre><code><span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [error, setError] = <span class="fn">useState</span>(<span class="str">''</span>)
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">false</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> controller = <span class="kw">new</span> <span class="fn">AbortController</span>()
+    <span class="fn">setLoading</span>(<span class="kw">true</span>)
+
+    <span class="fn">fetch</span>(<span class="str">'https://jsonplaceholder.typicode.com/users'</span>, { signal: controller.signal }) <span class="cm">// ← signal!</span>
+      .<span class="fn">then</span>(res => {
+        <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">`HTTP error: ${res.status}`</span>) <span class="cm">// ← res.ok!</span>
+        <span class="kw">return</span> res.<span class="fn">json</span>()
+      })
+      .<span class="fn">then</span>(users => <span class="fn">setData</span>(users))
+      .<span class="fn">catch</span>(err => {
+        <span class="kw">if</span> (err.name === <span class="str">'AbortError'</span>) <span class="kw">return</span>
+        <span class="fn">setError</span>(err.message)
+      })
+      .<span class="fn">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>))
+
+    <span class="kw">return</span> () => controller.<span class="fn">abort</span>()
+  }, [])
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Loading...<span class="tag">&lt;/p&gt;</span>
+  <span class="kw">if</span> (error) <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Error: {error}<span class="tag">&lt;/p&gt;</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;ul&gt;</span>{data.<span class="fn">map</span>(u => <span class="tag">&lt;li</span> key={u.id}<span class="tag">&gt;</span>{u.name}<span class="tag">&lt;/li&gt;</span>)}<span class="tag">&lt;/ul&gt;</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >Search filter — real-time case-insensitive, no API calls</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-w">⚠️ Minor</div>
+          <div class="pt pt-w">
+            Move static users array OUTSIDE the component — no need to recreate
+            on every render
+          </div>
+          <pre><code><span class="kw">const</span> users = [
+  { id: <span class="str">1</span>, name: <span class="str">'Alice'</span> }, { id: <span class="str">2</span>, name: <span class="str">'Bob'</span> },
+  { id: <span class="str">3</span>, name: <span class="str">'Charlie'</span> }, { id: <span class="str">4</span>, name: <span class="str">'David'</span> }, { id: <span class="str">5</span>, name: <span class="str">'Eve'</span> }
+] <span class="cm">// ← outside component</span>
+
+<span class="kw">function</span> <span class="fn">SearchFilter</span>() {
+  <span class="kw">const</span> [search, setSearch] = <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="kw">const</span> filtered = users.<span class="fn">filter</span>(u =>
+    u.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(search.<span class="fn">toLowerCase</span>())
+  ) <span class="cm">// derive from state — don't store filtered list in useState</span>
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;input</span> value={search} onChange={e => <span class="fn">setSearch</span>(e.target.value)} <span class="tag">/&gt;</span>
+      {filtered.length > <span class="str">0</span>
+        ? <span class="tag">&lt;ul&gt;</span>{filtered.<span class="fn">map</span>(u => <span class="tag">&lt;li</span> key={u.id}<span class="tag">&gt;</span>{u.name}<span class="tag">&lt;/li&gt;</span>)}<span class="tag">&lt;/ul&gt;</span>
+        : <span class="tag">&lt;p&gt;</span>No results found<span class="tag">&lt;/p&gt;</span>
+      }
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >Child re-renders on input — React.memo alone isn't enough. Why?
+            Fix?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">7.5/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ React.memo + useCallback BOTH needed — one without the other is
+            incomplete
+          </div>
+          <pre><code><span class="cm">// ✅ Fix — both together</span>
+<span class="kw">const</span> Child = React.<span class="fn">memo</span>(({ onClick }) => {
+  console.<span class="fn">log</span>(<span class="str">'Child rendered'</span>)
+  <span class="kw">return</span> <span class="tag">&lt;button</span> onClick={onClick}<span class="tag">&gt;</span>Click me<span class="tag">&lt;/button&gt;</span>
+})
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="str">0</span>)
+  <span class="kw">const</span> [text, setText] = <span class="fn">useState</span>(<span class="str">''</span>)
+
+  <span class="kw">const</span> <span class="fn">handleClick</span> = <span class="fn">useCallback</span>(() => {
+    <span class="fn">setCount</span>(c => c + <span class="str">1</span>)
+  }, []) <span class="cm">// stable reference → React.memo works ✅</span>
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;input</span> value={text} onChange={e => <span class="fn">setText</span>(e.target.value)} <span class="tag">/&gt;</span>
+      <span class="tag">&lt;Child</span> onClick={<span class="fn">handleClick</span>} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  )
+}</code></pre>
+        </div>
+      </div>
+
+      <!-- ROUND 4 -->
+      <div class="round-title">Round 4 — Mixed Theory + Coding + Tricky</div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q1</span>
+          <span class="qtxt"
+            >What is prop drilling? Why is it a problem? Real world
+            example.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ What You Got Right</div>
+          <div class="pt pt-g">
+            Passing props through intermediate components that don't need them
+          </div>
+          <div class="pt pt-g">
+            Real world example: App → Navbar → Sidebar → Avatar
+          </div>
+          <div class="pt pt-g">
+            Context API and state management libraries solve it
+          </div>
+          <pre><code><span class="cm">// ❌ Prop drilling</span>
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> user = { name: <span class="str">'Alice'</span>, avatar: <span class="str">'pic.jpg'</span> }
+  <span class="kw">return</span> <span class="tag">&lt;Navbar</span> user={user} <span class="tag">/&gt;</span>
+}
+<span class="kw">function</span> <span class="fn">Navbar</span>({ user }) { <span class="kw">return</span> <span class="tag">&lt;Sidebar</span> user={user} <span class="tag">/&gt;</span> } <span class="cm">// doesn't use user</span>
+<span class="kw">function</span> <span class="fn">Sidebar</span>({ user }) { <span class="kw">return</span> <span class="tag">&lt;Avatar</span> user={user} <span class="tag">/&gt;</span> } <span class="cm">// doesn't use user</span>
+<span class="kw">function</span> <span class="fn">Avatar</span>({ user }) { <span class="kw">return</span> <span class="tag">&lt;img</span> src={user.avatar} <span class="tag">/&gt;</span> } <span class="cm">// only this needs it</span>
+
+<span class="cm">// ✅ Context API fix</span>
+<span class="kw">const</span> UserContext = <span class="fn">createContext</span>()
+<span class="kw">function</span> <span class="fn">Avatar</span>() {
+  <span class="kw">const</span> user = <span class="fn">useContext</span>(UserContext) <span class="cm">// direct access</span>
+  <span class="kw">return</span> <span class="tag">&lt;img</span> src={user.avatar} <span class="tag">/&gt;</span>
+}</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q2</span>
+          <span class="qtxt"
+            >useContext — does it cause re-renders? Performance problem?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-mid">5/10</div>
+          <div class="lbl lbl-w">
+            ⚠️ You Missed the Performance Problem Entirely
+          </div>
+          <div class="pt pt-w">
+            Every component consuming a context re-renders when ANY part of
+            context value changes
+          </div>
+          <div class="pt pt-w">
+            Even if the component only uses one small piece that didn't change
+          </div>
+          <pre><code><span class="cm">// ❌ theme changes → BOTH Navbar and Sidebar re-render</span>
+<span class="tag">&lt;AppContext.Provider</span> value={{ user, theme }}<span class="tag">&gt;</span>
+
+<span class="cm">// ✅ Fix 1 — split contexts</span>
+<span class="tag">&lt;UserContext.Provider</span> value={user}<span class="tag">&gt;</span>
+  <span class="tag">&lt;ThemeContext.Provider</span> value={theme}<span class="tag">&gt;</span>
+
+<span class="cm">// ✅ Fix 2 — memoize provider value</span>
+<span class="kw">const</span> value = <span class="fn">useMemo</span>(() => ({ user, theme }), [user, theme])
+<span class="tag">&lt;AppContext.Provider</span> value={value}<span class="tag">&gt;</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q3</span>
+          <span class="qtxt"
+            >useMemo vs useCallback — difference and when to use</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">9/10</div>
+          <div class="lbl lbl-g">✅ Excellent Answer</div>
+          <pre><code><span class="cm">// useMemo — memoizes a VALUE</span>
+<span class="kw">const</span> filtered = <span class="fn">useMemo</span>(() =>
+  users.<span class="fn">filter</span>(u => u.name.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(search.<span class="fn">toLowerCase</span>()))
+, [users, search])
+
+<span class="cm">// useCallback — memoizes a FUNCTION</span>
+<span class="kw">const</span> <span class="fn">handleClick</span> = <span class="fn">useCallback</span>(() => {
+  console.<span class="fn">log</span>(<span class="str">'clicked'</span>)
+}, [])
+
+<span class="cm">// They're related: useCallback(fn, deps) = useMemo(() => fn, deps)</span>
+
+<span class="cm">// ❌ Pointless useMemo — trivial calculation</span>
+<span class="kw">const</span> double = <span class="fn">useMemo</span>(() => count * <span class="str">2</span>, [count])
+
+<span class="cm">// ❌ Pointless useCallback — child not memoized</span>
+<span class="kw">const</span> <span class="fn">fn</span> = <span class="fn">useCallback</span>(() => {}, []) <span class="cm">// useless if Child isn't React.memo</span></code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q4</span>
+          <span class="qtxt"
+            >Stale closure — setInterval always logs 0. Problem name +
+            fix.</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">10/10</div>
+          <div class="lbl lbl-g">✅ Perfect Answer — Senior Level</div>
+          <pre><code><span class="cm">// Problem: stale closure — interval captures count=0 from first render</span>
+
+<span class="cm">// Fix 1 — add count to deps (interval restarts every change)</span>
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => console.<span class="fn">log</span>(count), <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id)
+}, [count])
+
+<span class="cm">// Fix 2 — useRef (better — interval stays stable, always reads fresh value)</span>
+<span class="kw">const</span> countRef = <span class="fn">useRef</span>(count)
+<span class="fn">useEffect</span>(() => { countRef.current = count }, [count])
+<span class="fn">useEffect</span>(() => {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(() => console.<span class="fn">log</span>(countRef.current), <span class="str">1000</span>)
+  <span class="kw">return</span> () => <span class="fn">clearInterval</span>(id)
+}, [])</code></pre>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" onclick="t(this)">
+          <span class="qnum">Q5</span>
+          <span class="qtxt"
+            >1000 UserCards — performance problem + React.memo + when does it
+            make things worse?</span
+          >
+          <span class="arrow">▾</span>
+        </div>
+        <div class="card-body">
+          <div class="score s-high">8.5/10</div>
+          <div class="lbl lbl-w">⚠️ Shallow Comparison Trap Missed</div>
+          <pre><code><span class="cm">// ✅ Wrap in React.memo</span>
+<span class="kw">const</span> UserCard = React.<span class="fn">memo</span>(({ user }) => (
+  <span class="tag">&lt;div&gt;</span><span class="tag">&lt;p&gt;</span>{user.name}<span class="tag">&lt;/p&gt;</span><span class="tag">&lt;p&gt;</span>{user.email}<span class="tag">&lt;/p&gt;</span><span class="tag">&lt;/div&gt;</span>
+))
+
+<span class="cm">// ❌ Shallow compare trap — new object literal every render</span>
+{users.<span class="fn">map</span>(u => <span class="tag">&lt;UserCard</span> key={u.id} user={{ name: u.name, email: u.email }} <span class="tag">/&gt;</span>)}
+<span class="cm">// React.memo sees new reference → re-renders anyway → useless</span>
+
+<span class="cm">// ✅ Pass stable reference</span>
+{users.<span class="fn">map</span>(u => <span class="tag">&lt;UserCard</span> key={u.id} user={u} <span class="tag">/&gt;</span>)}
+
+<span class="cm">// When React.memo makes things WORSE:</span>
+<span class="cm">// 1. Lightweight component — comparison overhead > render cost</span>
+<span class="cm">// 2. Props change every render — comparison always fails, overhead wasted</span>
+<span class="cm">// 3. Component renders once anyway — memo never helps</span></code></pre>
+        </div>
+      </div>
+
+      <div class="weak">
+        <h3>🔥 Day 1 — All Weak Areas</h3>
+        <div class="wi">
+          Virtual DOM step-by-step flow — practice saying all 6 steps out loud
+        </div>
+        <div class="wi">
+          Object.is bailout — "re-renders once then bails" NOT "nothing happens"
+        </div>
+        <div class="wi">
+          AbortController — ALWAYS pass signal to fetch (forgot this multiple
+          times)
+        </div>
+        <div class="wi">
+          res.ok check — fetch doesn't throw on 404/500 — always check manually
+        </div>
+        <div class="wi">
+          React.memo shallow comparison trap — never pass object literals as
+          props
+        </div>
+        <div class="wi">
+          Controlled vs Uncontrolled — anchor answer to FORM INPUTS specifically
+        </div>
+        <div class="wi">
+          Context re-renders — all consumers re-render when any part of context
+          changes
+        </div>
+      </div>
+    </div>
+    <script>
+      function t(h) {
+        const c = h.parentElement;
+        c.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 3 - JS Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #f472b6;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #f472b6;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #f9a8d4;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #2a0a1a;
+        border-left: 3px solid #f472b6;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #f472b6;
+        border: 1px solid #f472b6;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 3 - JS Interview</h1>
+    <p style="color: #888">
+      Debouncing + Throttling + Currying + ES6+ | 26 Questions
+    </p>
+
+    <h2>Round 1 - Debouncing, Throttling, Currying, Memoization</h2>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>What is Debouncing? Where is it used?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Debouncing = execute function only after user 
+// stops doing action for a specified delay!
+
+// Real use: search bar — don't call API on every keystroke!
+// Wait 500ms after user stops typing, then call API
+
+// Without debouncing: 10 API calls for "school bag"
+// With debouncing: 1 API call after user stops!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>Implement debounce from scratch!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function debounce(fn, delay) {
+  let timer;
+  return function (...args) {
+    clearTimeout(timer); // cancel previous timer
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const search = debounce((query) => {
+  console.log("API call:", query);
+}, 500);
+
+search("s");
+search("sc");
+search("school"); // only this executes after 500ms!</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>What is Throttling? Difference from Debouncing?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Throttling = runs once, then waits for delay before next run
+// In between calls are ignored!
+
+// Debounce — runs after INACTIVITY
+// Throttle — runs every X ms no matter what
+
+// Debounce use: search bar
+// Throttle use: scroll events, window resize, button clicks</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>Implement throttle from scratch!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function throttle(fn, delay) {
+  let lastCall = 0;
+  return function (...args) {
+    const now = Date.now();
+    if (now - lastCall >= delay) {
+      lastCall = now;
+      fn.apply(this, args);
+    }
+  };
+}</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>What is Currying? Implement add(1)(2)(3)!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Currying = transform function with multiple args
+// to sequence of functions each taking single arg!
+
+function add(a) {
+  return (b) => {
+    return (c) => a + b + c;
+  };
+}
+// Cleaner:
+const add = (a) => (b) => (c) => a + b + c;
+console.log(add(1)(2)(3)); // 6</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>Implement infinite currying! add(1)(2)(3)(4)(5)() = 15</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function add(a) {
+  return (b) => b ? add(a + b) : a;
+}
+// b exists — keep accumulating
+// b is empty — return final sum!
+console.log(add(1)(2)(3)(4)(5)()); // 15</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>What is Memoization? Implement it!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Memoization = cache previous results to avoid redundant work!
+
+function memoize(fn) {
+  const cache = {};
+  return function(...args) {
+    const key = JSON.stringify(args);
+    if (key in cache) return cache[key]; // from cache!
+    cache[key] = fn(...args);
+    return cache[key];
+  }
+}
+
+const memoizedCalc = memoize((n) => n * n);
+memoizedCalc(5); // calculates
+memoizedCalc(5); // from cache! ✅</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>Difference between localStorage, sessionStorage, cookies?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// localStorage — persists forever (until manually cleared)
+localStorage.setItem("key", "value");
+localStorage.getItem("key");
+
+// sessionStorage — clears when tab/session closes
+sessionStorage.setItem("key", "value");
+
+// Cookies — sent to server with every request!
+// Size: localStorage/sessionStorage ~5MB, cookies ~4KB
+
+// | | localStorage | sessionStorage | Cookies |
+// | Storage | 5MB | 5MB | 4KB |
+// | Expiry | Never | Tab close | Configurable |
+// | Server | No | No | Yes |</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 2 - Coding Problems</h2>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>Flatten nested array without flat()!</p>
+      <pre>const arr = [1, [2, 3], [4, [5, 6]], [7, [8, [9]]]];</pre>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+function flattening(arr) {
+  let result = [];
+  for (const item of arr) {
+    if (Array.isArray(item)) result.push(...flattening(item));
+    else result.push(item);
+  }
+  return result;
+}
+// [1, 2, 3, 4, 5, 6, 7, 8, 9]</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>Group people by age using reduce()!</p>
+      <pre>
+const people = [
+  { name: "Himanshu", age: 25 },
+  { name: "Rahul", age: 30 },
+  { name: "Priya", age: 25 },
+];
+// Output: { 25: ["Himanshu", "Priya"], 30: ["Rahul"] }</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const grouped = people.reduce((acc, curr) => {
+  const { name, age } = curr;
+  if (!acc[age]) acc[age] = [];
+  acc[age].push(name);
+  return acc;
+}, {});</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q11</span>
+      <p>Find first non-repeating character!</p>
+      <pre>
+const str = "aabbcddeff";
+// Output: "c"</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const ans = (str) => {
+  let map = {};
+  for (const char of str) {
+    map[char] = (map[char] || 0) + 1;
+  }
+  for (const char of str) {
+    if (map[char] === 1) return char;
+  }
+  return null;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q12</span>
+      <p>Output?</p>
+      <pre>
+const obj = { a: 1, b: 2, c: 3 };
+const doubled = Object.keys(obj).reduce((acc, key) => {
+  acc[key] = obj[key] * 2;
+  return acc;
+}, {});
+console.log(doubled);</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer"><pre>{ a: 2, b: 4, c: 6 }</pre></div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q13</span>
+      <p>Implement custom flat() with depth!</p>
+      <pre>
+myFlat([1, [2, [3, [4]]]], 1); // [1, 2, [3, [4]]]
+myFlat([1, [2, [3, [4]]]], Infinity); // [1, 2, 3, 4]</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const myFlat = (arr, depth) => {
+  let newArr = [];
+  for (const item of arr) {
+    if (Array.isArray(item) && depth > 0) {
+      newArr.push(...myFlat(item, depth - 1));
+    } else newArr.push(item);
+  }
+  return newArr;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q14</span>
+      <p>Implement pipe() function!</p>
+      <pre>
+pipe(double, addOne, square)(3); // double(3)=6, addOne(6)=7, square(7)=49</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const pipe = (...fns) => (value) =>
+  fns.reduce((acc, fn) => fn(acc), value);
+// Left to right execution!</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 3 - ES6+ Advanced</h2>
+
+    <div class="q">
+      <span class="q-num">Q15</span>
+      <p>Difference between Map and Object?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Object — keys must be strings/symbols
+// Map — keys can be ANY type!
+
+const map = new Map();
+map.set(1, "number key");
+map.set(true, "boolean key");
+map.set({}, "object key");
+
+// Map has .size property
+map.size; // 3
+
+// Map maintains insertion ORDER!
+// Map methods: set, get, has, delete, clear
+
+// Use Object for simple data/JSON
+// Use Map for frequent add/delete, non-string keys</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q16</span>
+      <p>Count character frequency using Map!</p>
+      <pre>
+const str = "javascript";
+// Map { j=>1, a=>2, v=>1, ... }</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const map = new Map();
+for (const char of str) {
+  map.set(char, (map.get(char) || 0) + 1);
+  // map.get() not map[] — important!
+}
+console.log(map);</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q17</span>
+      <p>What is a Set? Show all methods!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Set = stores UNIQUE values only!
+const set = new Set([1, 2, 2, 3, 3]);
+console.log(set); // Set {1, 2, 3}
+
+set.add(4);
+set.has(2);    // true
+set.delete(2);
+set.size;      // 3
+set.clear();
+
+// Most common use — remove duplicates!
+const unique = [...new Set([1,2,2,3,3])]; // [1,2,3]</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q18</span>
+      <p>What is a Generator function?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Generator can PAUSE and RESUME execution!
+// function* syntax, yield keyword
+
+function* myGenerator() {
+  console.log("Step 1");
+  yield 1; // pause here!
+  console.log("Step 2");
+  yield 2;
+  console.log("Step 3");
+  yield 3;
+}
+
+const gen = myGenerator();
+gen.next(); // Step 1 — {value: 1, done: false}
+gen.next(); // Step 2 — {value: 2, done: false}
+gen.next(); // Step 3 — {value: 3, done: false}
+gen.next(); //         — {value: undefined, done: true}</pre
+        >
+      </div>
+    </div>
+
+    <h2>Round 4 - Coding Problems 2</h2>
+
+    <div class="q">
+      <span class="q-num">Q19</span>
+      <p>Implement Object.groupBy()!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const groupBy = (arr, key) =>
+  arr.reduce((acc, curr) => {
+    const groupKey = curr[key]; // dynamic key!
+    if (!acc[groupKey]) acc[groupKey] = [];
+    acc[groupKey].push(curr.name);
+    return acc;
+  }, {});</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q20</span>
+      <p>Check if string is palindrome!</p>
+      <pre>
+isPalindrome("racecar"); // true
+isPalindrome("hello");   // false</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const isPalindrome = (str) =>
+  str === str.split("").reverse().join("");</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q21</span>
+      <p>Deep equal two objects!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const deepEqual = (obj1, obj2) => {
+  if (obj1 === obj2) return true;
+  if (typeof obj1 !== "object" || typeof obj2 !== "object" ||
+      obj1 === null || obj2 === null) return false;
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  if (keys1.length !== keys2.length) return false;
+  for (const key of keys1) {
+    if (!deepEqual(obj1[key], obj2[key])) return false;
+  }
+  return true;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q22</span>
+      <p>Implement Promise.all() from scratch!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const myPromiseAll = (promises) => {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    let resolved = 0;
+    if (promises.length === 0) return resolve([]);
+    for (let i = 0; i < promises.length; i++) {
+      Promise.resolve(promises[i])
+        .then((value) => {
+          results[i] = value;
+          resolved++;
+          if (resolved === promises.length) resolve(results);
+        })
+        .catch((err) => reject(err));
+    }
+  });
+};</pre
+        >
+      </div>
+    </div>
+  </body>
+</html>

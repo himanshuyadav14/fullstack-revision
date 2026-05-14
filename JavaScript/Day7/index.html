@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Day 7 - Final Mock Interview</title>
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: monospace;
+        padding: 2rem;
+      }
+      h1 {
+        color: #a855f7;
+      }
+      h2 {
+        color: #60a5fa;
+        margin-top: 2rem;
+      }
+      .q {
+        background: #111;
+        border-left: 3px solid #a855f7;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+      .q-num {
+        color: #c084fc;
+        font-size: 12px;
+      }
+      pre {
+        background: #1a1a1a;
+        padding: 1rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        color: #e2e8f0;
+      }
+      .answer {
+        background: #1a0a2a;
+        border-left: 3px solid #a855f7;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+      button {
+        background: #1a1a1a;
+        color: #a855f7;
+        border: 1px solid #a855f7;
+        padding: 4px 12px;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+      .rule {
+        background: #0a001a;
+        border: 1px solid #a855f7;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 2rem;
+      }
+      .score {
+        background: #111;
+        border: 1px solid #4ade80;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Day 7 - Final Mock Interview</h1>
+    <p style="color: #888">10 Questions | Real interview style</p>
+
+    <div class="rule">
+      <p style="color: #c084fc; margin: 0">
+        Answer all 10 first — then check answers!
+      </p>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q1</span>
+      <p>What is the difference between == and ===? Give a tricky example!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+1 == "1"           // true (type coercion)
+1 === "1"          // false
+null == undefined  // true (special case!)
+null === undefined // false</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q2</span>
+      <p>Output?</p>
+      <pre>
+const arr = [1, 2, 3];
+const [a, ...rest] = arr;
+const obj = { x: 1, y: 2, z: 3 };
+const { x, ...remaining } = obj;
+console.log(a, rest, x, remaining);</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer"><pre>1, [2,3], 1, {y:2, z:3}</pre></div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q3</span>
+      <p>Convert flat array to tree structure!</p>
+      <pre>
+const flat = [
+  { id: 1, parentId: null, name: "Root" },
+  { id: 2, parentId: 1, name: "Child 1" },
+  { id: 3, parentId: 1, name: "Child 2" },
+  { id: 4, parentId: 2, name: "Grandchild 1" },
+];</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const buildTree = (flat) => {
+  const map = {};
+  let root = null;
+  flat.forEach(({ id, name }) => {
+    map[id] = { id, name, children: [] };
+  });
+  flat.forEach(({ id, parentId }) => {
+    if (parentId === null) root = map[id];
+    else map[parentId].children.push(map[id]);
+  });
+  return root;
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q4</span>
+      <p>Output?</p>
+      <pre>
+async function test() {
+  console.log("A");
+  await new Promise(resolve => {
+    console.log("B");
+    resolve();
+  });
+  console.log("C");
+}
+console.log("D");
+test();
+console.log("E");</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer"><pre>D, A, B, E, C</pre></div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q5</span>
+      <p>Implement limitCalls()!</p>
+      <pre>
+const limited = limitCalls(fn, 3);
+limited(); // works x3, then nothing</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const limitCalls = (fn, limit) => {
+  let remaining = limit;
+  return () => {
+    if (remaining > 0) {
+      remaining--;
+      fn();
+    }
+  };
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q6</span>
+      <p>Difference between Microtask and Macrotask queue?</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+// Microtask - higher priority
+// Promise.then(), async/await
+
+// Macrotask - lower priority
+// setTimeout, setInterval, DOM events
+
+// Order: Call Stack -> Microtask -> Macrotask</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q7</span>
+      <p>Implement runSequentially()!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const runSequentially = async (tasks) => {
+  for (const task of tasks) {
+    try {
+      const data = await task();
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q8</span>
+      <p>What is Prototypal Inheritance? Show with ES6 classes!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+class Animal {
+  constructor(name) { this.name = name; }
+  speak() { console.log(this.name + " makes noise"); }
+}
+class Dog extends Animal {
+  speak() { console.log(this.name + " barks"); }
+}
+const d = new Dog("Tommy");
+d.speak(); // "Tommy barks"</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q9</span>
+      <p>Output?</p>
+      <pre>
+const obj = {
+  name: "Himanshu",
+  greet: function() {
+    const inner = () => { console.log(this.name); }
+    inner();
+  }
+}
+const greet = obj.greet;
+obj.greet();
+greet();</pre
+      >
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+"Himanshu" // obj.greet() - this = obj, arrow inherits!
+undefined  // greet() - this = window</pre
+        >
+      </div>
+    </div>
+
+    <div class="q">
+      <span class="q-num">Q10</span>
+      <p>Implement createBatcher()!</p>
+      <button onclick="this.nextElementSibling.style.display = 'block'">
+        Show Answer
+      </button>
+      <div class="answer">
+        <pre>
+const createBatcher = (apiFn, delay) => {
+  let queue = [];
+  let timer = null;
+  return function(...args) {
+    queue.push(args);
+    if(timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      queue.forEach(a => apiFn(...a));
+      queue = [];
+      timer = null;
+    }, delay);
+  };
+};</pre
+        >
+      </div>
+    </div>
+
+    <div class="score">
+      <p style="color: #4ade80; margin: 0">
+        Score: 9-10 = Interview Ready! | 7-8 = Almost! | Below 7 = Revise!
+      </p>
+    </div>
+  </body>
+</html>
