@@ -1,0 +1,1823 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Day 2 — Express.js Interview Revision</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Fraunces:ital,wght@0,400;0,700;0,900;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f5f0e8;
+        --surface: #fff9f0;
+        --surface2: #ede8df;
+        --border: #d4cfc6;
+        --accent: #c84b31;
+        --accent2: #2d6a4f;
+        --accent3: #1a4971;
+        --text: #1a1a1a;
+        --muted: #7a7265;
+        --correct: #2d6a4f;
+        --missing: #b5451b;
+        --score-high: #2d6a4f;
+        --score-mid: #c47c2b;
+        --score-low: #c84b31;
+        --code-bg: #1e1e2e;
+        --code-text: #cdd6f4;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Fraunces", Georgia, serif;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Subtle paper texture */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23f5f0e8'/%3E%3Crect x='0' y='0' width='1' height='1' fill='%23ede8df' opacity='0.4'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .container {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 48px 28px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Header */
+      header {
+        border-top: 4px solid var(--accent);
+        border-bottom: 1px solid var(--border);
+        padding: 40px 0 32px;
+        margin-bottom: 56px;
+        position: relative;
+      }
+
+      .day-badge {
+        display: inline-block;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+
+      header h1 {
+        font-size: clamp(32px, 6vw, 60px);
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: -2px;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      header h1 em {
+        font-style: italic;
+        color: var(--accent);
+      }
+
+      header p {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+
+      /* Score overview */
+      .score-overview {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+
+      .score-pill {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        padding: 6px 14px;
+        border-radius: 2px;
+        border: 1px solid;
+        font-weight: 600;
+      }
+
+      .score-pill.total {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(200, 75, 49, 0.08);
+      }
+      .score-pill.r1 {
+        border-color: var(--accent3);
+        color: var(--accent3);
+        background: rgba(26, 73, 113, 0.08);
+      }
+      .score-pill.r2 {
+        border-color: var(--score-mid);
+        color: var(--score-mid);
+        background: rgba(196, 124, 43, 0.08);
+      }
+      .score-pill.r3 {
+        border-color: var(--accent2);
+        color: var(--accent2);
+        background: rgba(45, 106, 79, 0.08);
+      }
+      .score-pill.r4 {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(200, 75, 49, 0.08);
+      }
+
+      /* Round header */
+      .round-header {
+        display: flex;
+        align-items: baseline;
+        gap: 16px;
+        margin: 52px 0 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--text);
+      }
+
+      .round-num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .round-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--text);
+        font-style: italic;
+      }
+
+      .round-score {
+        margin-left: auto;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      /* Question card */
+      .q-card {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        margin-bottom: 16px;
+        border-radius: 4px;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+
+      .q-card:hover {
+        box-shadow: 3px 3px 0 var(--border);
+      }
+
+      .q-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 22px;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .q-num {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--surface);
+        background: var(--accent3);
+        padding: 3px 8px;
+        border-radius: 2px;
+        white-space: nowrap;
+        margin-top: 3px;
+        flex-shrink: 0;
+      }
+
+      .q-title {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.5;
+        flex: 1;
+        color: var(--text);
+      }
+
+      .q-score-badge {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        flex-shrink: 0;
+        padding: 2px 8px;
+        border-radius: 2px;
+      }
+
+      .sh {
+        color: var(--score-high);
+        background: rgba(45, 106, 79, 0.1);
+      }
+      .sm {
+        color: var(--score-mid);
+        background: rgba(196, 124, 43, 0.1);
+      }
+      .sl {
+        color: var(--score-low);
+        background: rgba(200, 75, 49, 0.1);
+      }
+
+      .q-arrow {
+        color: var(--muted);
+        font-size: 16px;
+        transition: transform 0.25s;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .q-card.open .q-arrow {
+        transform: rotate(90deg);
+      }
+
+      /* Body */
+      .q-body {
+        display: none;
+        padding: 4px 22px 22px;
+        border-top: 1px solid var(--border);
+      }
+
+      .q-card.open .q-body {
+        display: block;
+      }
+
+      /* Sections */
+      .section {
+        margin-top: 18px;
+      }
+
+      .section-label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .section-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: currentColor;
+        opacity: 0.25;
+      }
+
+      .sl-correct {
+        color: var(--correct);
+      }
+      .sl-missing {
+        color: var(--missing);
+      }
+      .sl-answer {
+        color: var(--accent3);
+      }
+
+      /* Points */
+      .points {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+
+      .pt {
+        font-size: 14px;
+        line-height: 1.6;
+        padding: 8px 12px 8px 14px;
+        border-left: 3px solid;
+        border-radius: 0 3px 3px 0;
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .pt.ok {
+        border-color: var(--correct);
+        background: rgba(45, 106, 79, 0.06);
+        color: #1a3d2b;
+      }
+      .pt.warn {
+        border-color: var(--missing);
+        background: rgba(200, 75, 49, 0.06);
+        color: #5c1f0d;
+      }
+
+      /* Code */
+      pre {
+        background: var(--code-bg);
+        border-radius: 4px;
+        padding: 16px 18px;
+        overflow-x: auto;
+        margin-top: 10px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12.5px;
+        line-height: 1.75;
+        color: var(--code-text);
+        border-left: 3px solid var(--accent3);
+      }
+
+      .kw {
+        color: #cba6f7;
+      }
+      .fn {
+        color: #89b4fa;
+      }
+      .str {
+        color: #a6e3a1;
+      }
+      .cm {
+        color: #6c7086;
+        font-style: italic;
+      }
+      .num {
+        color: #fab387;
+      }
+      .prop {
+        color: #94e2d5;
+      }
+      .err {
+        color: #f38ba8;
+      }
+
+      /* Output */
+      .output {
+        background: #11111b;
+        border: 1px solid #313244;
+        border-radius: 4px;
+        padding: 14px 16px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 13px;
+        margin-top: 10px;
+      }
+
+      .out-line {
+        color: #a6e3a1;
+        margin-bottom: 3px;
+      }
+      .out-line::before {
+        content: "$ ";
+        color: #6c7086;
+      }
+      .out-note {
+        color: #6c7086;
+        font-size: 11px;
+        margin-top: 4px;
+        font-style: italic;
+      }
+
+      /* Table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        font-size: 13px;
+      }
+      th {
+        background: var(--surface2);
+        padding: 9px 13px;
+        text-align: left;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      td {
+        padding: 9px 13px;
+        border: 1px solid var(--border);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        vertical-align: top;
+      }
+      tr:nth-child(even) td {
+        background: var(--surface2);
+      }
+
+      /* Explanation */
+      .note {
+        font-size: 14px;
+        line-height: 1.7;
+        color: var(--muted);
+        margin-top: 10px;
+        padding: 10px 14px;
+        background: var(--surface2);
+        border-radius: 3px;
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      .note strong {
+        color: var(--text);
+      }
+
+      /* Round summary box */
+      .round-box {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 20px 22px;
+        margin: 20px 0 44px;
+      }
+
+      .round-box h3 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+
+      .sg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 8px;
+      }
+
+      .si {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 10px 12px;
+        border-radius: 3px;
+      }
+
+      .si-topic {
+        font-size: 11px;
+        color: var(--muted);
+        font-family: "IBM Plex Mono", monospace;
+        margin-bottom: 4px;
+      }
+      .si-score {
+        font-size: 22px;
+        font-weight: 700;
+        font-family: "IBM Plex Mono", monospace;
+      }
+
+      /* Areas */
+      .areas {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+      @media (max-width: 580px) {
+        .areas {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .area {
+        padding: 14px 16px;
+        border-radius: 3px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+
+      .area h4 {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+
+      .area.weak h4 {
+        color: var(--missing);
+      }
+      .area.strong h4 {
+        color: var(--correct);
+      }
+
+      .area ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .area ul li {
+        font-size: 12px;
+        font-family: "IBM Plex Mono", monospace;
+        color: var(--muted);
+        padding-left: 14px;
+        position: relative;
+        line-height: 1.5;
+      }
+
+      .area.weak ul li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--missing);
+      }
+      .area.strong ul li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        color: var(--correct);
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 32px 0;
+        border-top: 1px solid var(--border);
+        margin-top: 40px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 1px;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="day-badge">Day 02 · Express.js</div>
+        <h1>Backend Interview<br /><em>Revision Sheet</em></h1>
+        <p>4 Rounds · Middleware → Routing → Error Handling → JWT Auth</p>
+        <div class="score-overview">
+          <span class="score-pill total">Overall: 183/200 — 91%</span>
+          <span class="score-pill r1">R1: 56/60 — 93%</span>
+          <span class="score-pill r2">R2: 45.5/50 — 91%</span>
+          <span class="score-pill r3">R3: 41.5/50 — 83%</span>
+          <span class="score-pill r4">R4: 40/40 — 100%</span>
+        </div>
+      </header>
+
+      <!-- ══════════ ROUND 1 ══════════ -->
+      <div class="round-header">
+        <span class="round-num">Round 01</span>
+        <span class="round-title">Theory Fundamentals</span>
+        <span class="round-score">56/60 · 93%</span>
+      </div>
+
+      <!-- Q1 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q01</span>
+          <span class="q-title"
+            >What is Express.js? Why was it created? What does it give you over
+            raw http module?</span
+          >
+          <span class="q-score-badge sh">9.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Key Answer</div>
+            <p class="note">
+              Express.js is a minimal, lightweight web framework built on top of
+              Node.js. Created because raw <code>http</code> module becomes
+              repetitive and hard to maintain in real apps. Express provides
+              <strong
+                >middleware architecture, clean routing, enhanced req/res, and
+                code organization.</strong
+              >
+            </p>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              http vs Express comparison
+            </div>
+            <pre><span class="cm">// Raw http — repetitive, manual</span>
+<span class="kw">if</span> (req.url === <span class="str">'/about'</span> && req.method === <span class="str">'GET'</span>) {
+  res.<span class="fn">end</span>(<span class="str">'About'</span>)
+}
+
+<span class="cm">// Express — clean, automatic</span>
+app.<span class="fn">get</span>(<span class="str">'/about'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'About'</span>))</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">What Express adds</div>
+            <div class="points">
+              <div class="pt ok">
+                Middleware architecture — app.use(express.json())
+              </div>
+              <div class="pt ok">
+                Enhanced req — req.params, req.query, req.body
+              </div>
+              <div class="pt ok">
+                Enhanced res — res.send(), res.json(), res.status()
+              </div>
+              <div class="pt ok">
+                Code organization — Routers, Controllers, Middleware, Services
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">Missing point</div>
+            <div class="points">
+              <div class="pt warn">
+                req.params auto-parsed — in raw http you split URL manually:
+                req.url.split('/')[2]. Express does it automatically with :id
+                syntax.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q02</span>
+          <span class="q-title"
+            >What is the middleware chain? How does next() work? What if you
+            forget next() or res.send()?</span
+          >
+          <span class="q-score-badge sh">9.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Middleware Chain Flow</div>
+            <pre><span class="cm">// Request → MW1 → MW2 → MW3 → Response</span>
+app.<span class="fn">use</span>((req, res, next) => {
+  <span class="fn">console</span>.<span class="prop">log</span>(<span class="str">'MW1'</span>)
+  <span class="fn">next</span>()  <span class="cm">// pass to next middleware</span>
+})
+
+app.<span class="fn">use</span>((req, res, next) => {
+  <span class="fn">console</span>.<span class="prop">log</span>(<span class="str">'MW2'</span>)
+  <span class="cm">// next() forgotten → REQUEST HANGS</span>
+})</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">
+              Critical bugs to remember
+            </div>
+            <div class="points">
+              <div class="pt warn">
+                Forget next() → request hangs forever, client keeps loading. No
+                response sent.
+              </div>
+              <div class="pt warn">
+                Forget res.send() → request reaches route but client still
+                waits. Same hang.
+              </div>
+              <div class="pt warn">
+                Call both next() AND res.send() → "Cannot set headers after they
+                are sent" error.
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Always return before res.send()
+            </div>
+            <pre><span class="cm">// ✅ ALWAYS return to prevent next() running after</span>
+app.<span class="fn">use</span>((req, res, next) => {
+  <span class="kw">if</span> (!req.headers.authorization) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">'Unauthorized'</span> })
+  }
+  <span class="fn">next</span>()
+})
+
+<span class="cm">// Request timeout in production</span>
+res.<span class="fn">setTimeout</span>(<span class="num">5000</span>, () => res.<span class="fn">status</span>(<span class="num">408</span>).<span class="fn">json</span>({ error: <span class="str">'Timeout'</span> }))</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q03</span>
+          <span class="q-title"
+            >What are the different types of middleware in Express? Explain
+            each.</span
+          >
+          <span class="q-score-badge sm">7.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">5 Types of Middleware</div>
+            <table>
+              <tr>
+                <th>Type</th>
+                <th>Example</th>
+                <th>Purpose</th>
+              </tr>
+              <tr>
+                <td>Application-level</td>
+                <td>app.use()</td>
+                <td>Runs on all routes</td>
+              </tr>
+              <tr>
+                <td>Router-level</td>
+                <td>router.use()</td>
+                <td>Runs on specific router</td>
+              </tr>
+              <tr>
+                <td>Error-handling</td>
+                <td>(err,req,res,next)</td>
+                <td>Catches all errors</td>
+              </tr>
+              <tr>
+                <td>Built-in</td>
+                <td>express.json()</td>
+                <td>Parsing, static files</td>
+              </tr>
+              <tr>
+                <td>Third-party</td>
+                <td>cors(), morgan()</td>
+                <td>External packages</td>
+              </tr>
+            </table>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">
+              What you missed — Error middleware (5th type)
+            </div>
+            <pre><span class="cm">// Error middleware — MUST have 4 params</span>
+app.<span class="fn">use</span>((err, req, res, next) => {
+  <span class="fn">console</span>.<span class="prop">error</span>(err.stack)
+  res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ error: err.message })
+})
+<span class="cm">// Must be registered LAST — after all routes</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Correct middleware order</div>
+            <pre>app.<span class="fn">use</span>(express.<span class="fn">json</span>())        <span class="cm">// 1. parse body</span>
+app.<span class="fn">use</span>(<span class="fn">morgan</span>(<span class="str">'dev'</span>))          <span class="cm">// 2. log requests</span>
+app.<span class="fn">use</span>(authMiddleware)        <span class="cm">// 3. authenticate</span>
+app.<span class="fn">use</span>(<span class="str">'/api'</span>, router)         <span class="cm">// 4. routes</span>
+app.<span class="fn">use</span>(errorHandler)          <span class="cm">// 5. error handler LAST</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Built-in middleware — all 3
+            </div>
+            <pre>app.<span class="fn">use</span>(express.<span class="fn">json</span>())                          <span class="cm">// JSON body</span>
+app.<span class="fn">use</span>(express.<span class="fn">urlencoded</span>({ extended: <span class="kw">true</span> }))  <span class="cm">// form data</span>
+app.<span class="fn">use</span>(express.<span class="fn">static</span>(<span class="str">'public'</span>))               <span class="cm">// static files</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q04</span>
+          <span class="q-title"
+            >How does error handling work? Sync vs async errors. Write error
+            handler middleware.</span
+          >
+          <span class="q-score-badge sh">9.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">
+              Sync vs Async error handling
+            </div>
+            <pre><span class="cm">// Sync — Express catches automatically</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => {
+  <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="str">'Sync error'</span>)  <span class="cm">// auto caught</span>
+})
+
+<span class="cm">// Async — MUST use next(err) in Express 4</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, <span class="kw">async</span> (req, res, next) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchDB</span>()
+    res.<span class="fn">json</span>(data)
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">next</span>(err)  <span class="cm">// manually pass to error handler</span>
+  }
+})</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">
+              asyncHandler pattern — production must-know
+            </div>
+            <pre><span class="cm">// Wrap routes to avoid repeating try/catch</span>
+<span class="kw">const</span> <span class="fn">asyncHandler</span> = (fn) => (req, res, next) =>
+  Promise.<span class="fn">resolve</span>(<span class="fn">fn</span>(req, res, next)).<span class="fn">catch</span>(next)
+
+<span class="cm">// Usage — no try/catch needed!</span>
+app.<span class="fn">get</span>(<span class="str">'/users'</span>, <span class="fn">asyncHandler</span>(<span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> users = <span class="kw">await</span> User.<span class="fn">find</span>()
+  res.<span class="fn">json</span>(users)
+}))</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Complete error handler</div>
+            <pre><span class="kw">const</span> <span class="fn">errorHandler</span> = (err, req, res, next) => {
+  <span class="kw">let</span> statusCode = err.statusCode || <span class="num">500</span>
+  <span class="kw">let</span> message = err.message || <span class="str">'Internal Server Error'</span>
+
+  <span class="kw">if</span> (err.name === <span class="str">'ValidationError'</span>) {
+    statusCode = <span class="num">400</span>; message = <span class="str">'Validation Error'</span>
+  }
+  <span class="kw">if</span> (err.name === <span class="str">'JsonWebTokenError'</span> || err.name === <span class="str">'TokenExpiredError'</span>) {
+    statusCode = <span class="num">401</span>; message = <span class="str">'Unauthorized'</span>
+  }
+
+  res.<span class="fn">status</span>(statusCode).<span class="fn">json</span>({
+    success: <span class="kw">false</span>, message,
+    stack: process.env.NODE_ENV === <span class="str">'production'</span> ? <span class="kw">null</span> : err.stack
+  })
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q05</span>
+          <span class="q-title"
+            >req.params vs req.query vs req.body — differences and when each is
+            available</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">All three together</div>
+            <pre><span class="cm">// URL: PUT /users/42?role=admin</span>
+<span class="cm">// Body: { "name": "Himanshu" }</span>
+
+app.<span class="fn">put</span>(<span class="str">'/users/:id'</span>, (req, res) => {
+  <span class="kw">const</span> userId   = req.params.id    <span class="cm">// "42" — from URL path</span>
+  <span class="kw">const</span> role     = req.query.role   <span class="cm">// "admin" — after ?</span>
+  <span class="kw">const</span> userData = req.body         <span class="cm">// { name: "Himanshu" } — request body</span>
+})</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Comparison</div>
+            <table>
+              <tr>
+                <th>Property</th>
+                <th>Source</th>
+                <th>Methods</th>
+                <th>Requires</th>
+              </tr>
+              <tr>
+                <td>req.params</td>
+                <td>URL path :id</td>
+                <td>All</td>
+                <td>Nothing</td>
+              </tr>
+              <tr>
+                <td>req.query</td>
+                <td>?key=value</td>
+                <td>All</td>
+                <td>Nothing</td>
+              </tr>
+              <tr>
+                <td>req.body</td>
+                <td>Request body</td>
+                <td>POST/PUT/PATCH</td>
+                <td>express.json()</td>
+              </tr>
+            </table>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">All values are STRINGS</div>
+            <pre><span class="cm">// req.params.id is "42" (string), not 42 (number)</span>
+<span class="cm">// Always convert when comparing with numbers:</span>
+<span class="kw">const</span> userId = <span class="fn">Number</span>(req.params.id)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q06</span>
+          <span class="q-title"
+            >What is Express Router? Why use it? Show folder structure and
+            code.</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">
+              Production folder structure
+            </div>
+            <pre><span class="cm">project/
+├── server.js
+├── routes/
+│   ├── userRoutes.js
+│   ├── productRoutes.js
+│   └── authRoutes.js
+├── controllers/
+│   ├── userController.js
+│   └── authController.js
+├── middleware/
+│   ├── authMiddleware.js
+│   └── errorMiddleware.js
+└── models/
+    └── User.js</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">server.js + userRoutes.js</div>
+            <pre><span class="cm">// server.js</span>
+<span class="kw">const</span> userRoutes = <span class="fn">require</span>(<span class="str">'./routes/userRoutes'</span>)
+app.<span class="fn">use</span>(<span class="str">'/users'</span>, userRoutes)
+<span class="cm">// All routes inside userRoutes now start with /users</span>
+
+<span class="cm">// routes/userRoutes.js</span>
+<span class="kw">const</span> router = express.<span class="fn">Router</span>()
+router.<span class="fn">get</span>(<span class="str">'/'</span>, getUsers)       <span class="cm">// GET /users</span>
+router.<span class="fn">post</span>(<span class="str">'/'</span>, createUser)    <span class="cm">// POST /users</span>
+router.<span class="fn">get</span>(<span class="str">'/:id'</span>, getUserById) <span class="cm">// GET /users/42</span>
+module.exports = router</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Round 1 summary -->
+      <div class="round-box">
+        <h3>Round 1 Summary</h3>
+        <div class="sg">
+          <div class="si">
+            <div class="si-topic">What is Express</div>
+            <div class="si-score" style="color: var(--score-high)">9.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Middleware chain</div>
+            <div class="si-score" style="color: var(--score-high)">9.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Middleware types</div>
+            <div class="si-score" style="color: var(--score-mid)">7.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Error handling</div>
+            <div class="si-score" style="color: var(--score-high)">9.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">req params/query/body</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Express Router</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ ROUND 2 ══════════ -->
+      <div class="round-header">
+        <span class="round-num">Round 02</span>
+        <span class="round-title">Theory + Output Questions</span>
+        <span class="round-score">45.5/50 · 91%</span>
+      </div>
+
+      <!-- Q7 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q07</span>
+          <span class="q-title"
+            >Trace the full request-response cycle for POST /api/users step by
+            step</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Complete flow</div>
+            <pre><span class="cm">// 1. Client sends HTTP request (fetch/axios/Postman)</span>
+<span class="cm">// 2. Node.js HTTP server receives TCP connection</span>
+<span class="cm">// 3. Node parses HTTP request → creates req, res objects</span>
+<span class="cm">// 4. Express receives request, enters middleware pipeline</span>
+<span class="cm">// 5. express.json() → reads raw buffer → attaches to req.body</span>
+<span class="cm">// 6. Custom middleware runs (auth, logging, etc)</span>
+<span class="cm">// 7. Express matches route by method + path</span>
+<span class="cm">// 8. Route-level middleware runs (validation, etc)</span>
+<span class="cm">// 9. Controller runs → DB operation → response prepared</span>
+<span class="cm">// 10. res.status(201).json(user) → writes to socket → client receives</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Before vs After express.json()
+            </div>
+            <pre><span class="cm">// Before express.json():</span>
+req.body === <span class="kw">undefined</span>
+
+<span class="cm">// After express.json():</span>
+req.body = { name: <span class="str">'Himanshu'</span>, email: <span class="str">'h@gmail.com'</span> }</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q08</span>
+          <span class="q-title"
+            >What is CORS? Simple request vs preflight request? How to configure
+            in Express?</span
+          >
+          <span class="q-score-badge sm">7.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">What is Origin?</div>
+            <pre><span class="cm">// Origin = Protocol + Domain + Port</span>
+http://localhost:<span class="num">3000</span>  ↔  http://localhost:<span class="num">5000</span>  <span class="cm">// DIFFERENT (port)</span>
+http://myapp.com     ↔  https://myapp.com     <span class="cm">// DIFFERENT (protocol)</span>
+http://api.myapp.com ↔  http://myapp.com      <span class="cm">// DIFFERENT (subdomain)</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">
+              Preflight request — what you missed
+            </div>
+            <pre><span class="cm">// Simple Request (GET, HEAD, POST with basic headers):</span>
+Browser → Server  <span class="cm">// direct, no check needed</span>
+
+<span class="cm">// Preflight Request (PUT, DELETE, PATCH or custom headers):</span>
+Browser → Server  <span class="cm">// OPTIONS request first: "are you okay with this?"</span>
+         ↓
+Server responds with allowed methods/headers
+         ↓
+Browser → Server  <span class="cm">// actual request</span>
+<span class="cm">// 2 round trips!</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Full CORS config</div>
+            <pre>app.<span class="fn">use</span>(<span class="fn">cors</span>({
+  origin: [<span class="str">'http://localhost:3000'</span>, <span class="str">'https://myapp.com'</span>],
+  methods: [<span class="str">'GET'</span>, <span class="str">'POST'</span>, <span class="str">'PUT'</span>, <span class="str">'DELETE'</span>],
+  allowedHeaders: [<span class="str">'Content-Type'</span>, <span class="str">'Authorization'</span>],
+  credentials: <span class="kw">true</span>  <span class="cm">// allow cookies cross-origin</span>
+}))</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Simple vs Preflight table</div>
+            <table>
+              <tr>
+                <th></th>
+                <th>Simple Request</th>
+                <th>Preflight</th>
+              </tr>
+              <tr>
+                <td>Methods</td>
+                <td>GET, HEAD, POST</td>
+                <td>PUT, DELETE, PATCH</td>
+              </tr>
+              <tr>
+                <td>Custom headers</td>
+                <td>Basic only</td>
+                <td>Authorization etc.</td>
+              </tr>
+              <tr>
+                <td>Browser</td>
+                <td>Direct request</td>
+                <td>OPTIONS check first</td>
+              </tr>
+              <tr>
+                <td>Round trips</td>
+                <td>1</td>
+                <td>2</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q09</span>
+          <span class="q-title"
+            >Output? — MW1, MW2+params, MW3, MW4 — what prints when GET
+            /users/123?</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Output</div>
+            <div class="output">
+              <div class="out-line">MW1</div>
+              <div class="out-line">MW2 123</div>
+              <div class="out-line">MW3</div>
+              <div class="out-note">
+                MW4 never runs — res.json() already sent in MW3
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Key insight</div>
+            <p class="note">
+              <strong
+                >Once res.json() is called, remaining app.use() after the route
+                is skipped.</strong
+              >
+              MW4 never executes because the response was already sent in MW3.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q10</span>
+          <span class="q-title"
+            >app.use() vs app.all() — differences, prefix matching, when to use
+            each</span
+          >
+          <span class="q-score-badge sh">9.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">
+              Key difference — prefix matching
+            </div>
+            <pre><span class="cm">// app.use('/api') — prefix match</span>
+<span class="cm">// Matches: /api, /api/users, /api/products/123</span>
+app.<span class="fn">use</span>(<span class="str">'/api'</span>, router)
+
+<span class="cm">// app.all('/api') — exact match</span>
+<span class="cm">// Matches: /api ONLY</span>
+<span class="cm">// Does NOT match: /api/users</span>
+app.<span class="fn">all</span>(<span class="str">'/api'</span>, handler)</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Common real-world use of app.all()
+            </div>
+            <pre><span class="cm">// 404 handler — catch all undefined routes</span>
+app.<span class="fn">all</span>(<span class="str">'*'</span>, (req, res) => {
+  res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ error: <span class="str">'Route not found'</span> })
+})
+<span class="cm">// Must be LAST — after all routes</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q11</span>
+          <span class="q-title"
+            >res.send() vs res.json() vs res.end() — when to use each?</span
+          >
+          <span class="q-score-badge sh">8.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Comparison</div>
+            <table>
+              <tr>
+                <th>Method</th>
+                <th>Use For</th>
+                <th>Sets Content-Type</th>
+              </tr>
+              <tr>
+                <td>res.send()</td>
+                <td>String, HTML, Object</td>
+                <td>Auto detects</td>
+              </tr>
+              <tr>
+                <td>res.json()</td>
+                <td>JSON APIs only</td>
+                <td>application/json</td>
+              </tr>
+              <tr>
+                <td>res.end()</td>
+                <td>No body / streams</td>
+                <td>No</td>
+              </tr>
+            </table>
+          </div>
+          <div class="section">
+            <div class="section-label sl-missing">
+              Subtle differences to know
+            </div>
+            <div class="points">
+              <div class="pt warn">
+                res.json() respects app.set('json spaces', 2) for pretty
+                printing — res.send() does not
+              </div>
+              <div class="pt warn">
+                res.end() use case — DELETE success: res.status(204).end() — 204
+                No Content has no body
+              </div>
+              <div class="pt warn">
+                res.status() must be chained BEFORE send — calling after does
+                nothing
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">res.end() real use cases</div>
+            <pre><span class="cm">// 204 No Content — DELETE success</span>
+res.<span class="fn">status</span>(<span class="num">204</span>).<span class="fn">end</span>()
+
+<span class="cm">// Manual stream writing</span>
+res.<span class="fn">writeHead</span>(<span class="num">200</span>, { <span class="str">'Content-Type'</span>: <span class="str">'text/plain'</span> })
+res.<span class="fn">write</span>(<span class="str">'chunk 1'</span>)
+res.<span class="fn">write</span>(<span class="str">'chunk 2'</span>)
+res.<span class="fn">end</span>()</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Round 2 summary -->
+      <div class="round-box">
+        <h3>Round 2 Summary</h3>
+        <div class="sg">
+          <div class="si">
+            <div class="si-topic">Request-response cycle</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">CORS + preflight</div>
+            <div class="si-score" style="color: var(--score-mid)">7.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Middleware output</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">app.use vs app.all</div>
+            <div class="si-score" style="color: var(--score-high)">9.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">res methods</div>
+            <div class="si-score" style="color: var(--score-high)">8.5/10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ ROUND 3 ══════════ -->
+      <div class="round-header">
+        <span class="round-num">Round 03</span>
+        <span class="round-title">Coding Problems</span>
+        <span class="round-score">41.5/50 · 83%</span>
+      </div>
+
+      <!-- Q12 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q12</span>
+          <span class="q-title"
+            >Full CRUD users router + controller with in-memory array</span
+          >
+          <span class="q-score-badge sm">7.5/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-missing">3 bugs in your solution</div>
+            <div class="points">
+              <div class="pt warn">
+                Bug 1 — req.params.id is STRING "42", users have NUMBER id 42.
+                "42" === 42 is FALSE. Always: Number(req.params.id)
+              </div>
+              <div class="pt warn">
+                Bug 2 — declared users as const, then users = users.filter() —
+                cannot reassign const. Use let.
+              </div>
+              <div class="pt warn">
+                Bug 3 — require path wrong. server.js at root, use
+                './routes/userRouter' not '../routes/userRouter'
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Correct controller pattern
+            </div>
+            <pre><span class="kw">let</span> users = [
+  { id: <span class="num">1</span>, name: <span class="str">'John'</span> },
+  { id: <span class="num">2</span>, name: <span class="str">'Jane'</span> }
+]
+
+<span class="kw">const</span> <span class="fn">getUserById</span> = (req, res) => {
+  <span class="kw">const</span> userId = <span class="fn">Number</span>(req.params.id)  <span class="cm">// ← convert!</span>
+  <span class="kw">const</span> user = users.<span class="fn">find</span>(u => u.id === userId)
+  <span class="kw">if</span> (!user) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ message: <span class="str">'Not found'</span> })
+  res.<span class="fn">json</span>(user)
+}
+
+<span class="kw">const</span> <span class="fn">deleteUser</span> = (req, res) => {
+  <span class="kw">const</span> userId = <span class="fn">Number</span>(req.params.id)  <span class="cm">// ← convert!</span>
+  <span class="kw">const</span> user = users.<span class="fn">find</span>(u => u.id === userId)
+  <span class="kw">if</span> (!user) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ message: <span class="str">'Not found'</span> })
+  users = users.<span class="fn">filter</span>(u => u.id !== userId)  <span class="cm">// ← let!</span>
+  res.<span class="fn">status</span>(<span class="num">200</span>).<span class="fn">json</span>({ message: <span class="str">'Deleted'</span> })
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q13 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q13</span>
+          <span class="q-title"
+            >requestLogger middleware — log method, URL, status code, time
+            taken</span
+          >
+          <span class="q-score-badge sl">4/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-missing">Critical bugs</div>
+            <div class="points">
+              <div class="pt warn">
+                Bug 1 — Logging status code in middleware runs BEFORE route.
+                Status is always 200 at that point. Must log AFTER response
+                sent.
+              </div>
+              <div class="pt warn">
+                Bug 2 — res.responseTime does not exist. Must calculate manually
+                with Date.now().
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Correct solution — res.on('finish')
+            </div>
+            <pre><span class="kw">const</span> <span class="fn">requestLogger</span> = (req, res, next) => {
+  <span class="kw">const</span> start = Date.<span class="fn">now</span>()
+
+  res.<span class="fn">on</span>(<span class="str">'finish'</span>, () => {  <span class="cm">// fires AFTER response sent</span>
+    <span class="kw">const</span> duration = Date.<span class="fn">now</span>() - start
+    <span class="fn">console</span>.<span class="prop">log</span>(<span class="str">`${req.method} ${req.url} ${res.statusCode} ${duration}ms`</span>)
+    <span class="cm">// POST /api/users 201 45ms</span>
+  })
+
+  <span class="fn">next</span>()
+}
+<span class="cm">// This is exactly how morgan works internally!</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Key insight</div>
+            <p class="note">
+              <strong>res.on('finish')</strong> is an event that fires after
+              response is fully sent to client. Only at this point do you know
+              the real status code and real duration.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q14 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q14</span>
+          <span class="q-title"
+            >validateUser middleware — name, email, optional age
+            validation</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Perfect solution</div>
+            <pre><span class="kw">const</span> <span class="fn">validateUser</span> = (req, res, next) => {
+  <span class="kw">const</span> { name, email, age } = req.body
+  <span class="kw">const</span> errors = []
+
+  <span class="cm">// name</span>
+  <span class="kw">if</span> (!name) errors.<span class="fn">push</span>(<span class="str">'Name is required'</span>)
+  <span class="kw">else if</span> (<span class="kw">typeof</span> name !== <span class="str">'string'</span>) errors.<span class="fn">push</span>(<span class="str">'Name must be a string'</span>)
+  <span class="kw">else if</span> (name.<span class="fn">trim</span>().length < <span class="num">2</span>) errors.<span class="fn">push</span>(<span class="str">'Name min 2 chars'</span>)
+
+  <span class="cm">// email</span>
+  <span class="kw">if</span> (!email) errors.<span class="fn">push</span>(<span class="str">'Email is required'</span>)
+  <span class="kw">else if</span> (!<span class="str">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>.<span class="fn">test</span>(email)) errors.<span class="fn">push</span>(<span class="str">'Invalid email'</span>)
+
+  <span class="cm">// age (optional)</span>
+  <span class="kw">if</span> (age !== <span class="kw">undefined</span>) {
+    <span class="kw">if</span> (<span class="kw">typeof</span> age !== <span class="str">'number'</span>) errors.<span class="fn">push</span>(<span class="str">'Age must be a number'</span>)
+    <span class="kw">else if</span> (age < <span class="num">18</span> || age > <span class="num">100</span>) errors.<span class="fn">push</span>(<span class="str">'Age must be 18-100'</span>)
+  }
+
+  <span class="kw">if</span> (errors.length > <span class="num">0</span>)
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ success: <span class="kw">false</span>, errors })
+
+  <span class="fn">next</span>()
+}</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q15 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q15</span>
+          <span class="q-title"
+            >Global error handler — 404, 400, 401, 500, no stack in
+            production</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Complete setup</div>
+            <pre><span class="cm">// 404 — before error handler, after all routes</span>
+app.<span class="fn">use</span>((req, res, next) => {
+  <span class="kw">const</span> err = <span class="kw">new</span> <span class="fn">Error</span>(<span class="str">`Not Found - ${req.originalUrl}`</span>)
+  err.statusCode = <span class="num">404</span>
+  <span class="fn">next</span>(err)
+})
+
+<span class="cm">// Error handler — always LAST</span>
+app.<span class="fn">use</span>((err, req, res, next) => {
+  <span class="kw">let</span> statusCode = err.statusCode || <span class="num">500</span>
+
+  <span class="kw">if</span> (err.name === <span class="str">'ValidationError'</span>) statusCode = <span class="num">400</span>
+  <span class="kw">if</span> (err.name === <span class="str">'JsonWebTokenError'</span> || err.name === <span class="str">'TokenExpiredError'</span>) statusCode = <span class="num">401</span>
+
+  res.<span class="fn">status</span>(statusCode).<span class="fn">json</span>({
+    success: <span class="kw">false</span>,
+    message: err.message || <span class="str">'Internal Server Error'</span>,
+    stack: process.env.NODE_ENV === <span class="str">'production'</span> ? <span class="kw">null</span> : err.stack
+  })
+})</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q16 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q16</span>
+          <span class="q-title"
+            >JWT auth middleware — extract Bearer token, verify, attach
+            req.user</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Complete auth middleware</div>
+            <pre><span class="kw">const</span> jwt = <span class="fn">require</span>(<span class="str">'jsonwebtoken'</span>)
+
+<span class="kw">const</span> <span class="fn">auth</span> = (req, res, next) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> authHeader = req.headers.authorization
+    <span class="kw">if</span> (!authHeader)
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Header missing'</span> })
+
+    <span class="kw">if</span> (!authHeader.<span class="fn">startsWith</span>(<span class="str">'Bearer '</span>))
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Invalid format'</span> })
+
+    <span class="kw">const</span> token = authHeader.<span class="fn">split</span>(<span class="str">' '</span>)[<span class="num">1</span>]
+    <span class="kw">const</span> decoded = jwt.<span class="fn">verify</span>(token, process.env.JWT_SECRET)
+    req.user = decoded
+    <span class="fn">next</span>()
+  } <span class="kw">catch</span> (err) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Invalid or expired token'</span> })
+  }
+}
+
+<span class="cm">// Usage</span>
+app.<span class="fn">get</span>(<span class="str">'/profile'</span>, auth, (req, res) => res.<span class="fn">json</span>({ user: req.user }))</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Round 3 summary -->
+      <div class="round-box">
+        <h3>Round 3 Summary</h3>
+        <div class="sg">
+          <div class="si">
+            <div class="si-topic">CRUD router</div>
+            <div class="si-score" style="color: var(--score-mid)">7.5/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Request logger</div>
+            <div class="si-score" style="color: var(--score-low)">4/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Validation middleware</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Error handler</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">JWT middleware</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════ ROUND 4 ══════════ -->
+      <div class="round-header">
+        <span class="round-num">Round 04</span>
+        <span class="round-title">Mixed — Theory + Tricky + Bugs</span>
+        <span class="round-score">40/40 · 100%</span>
+      </div>
+
+      <!-- Q17 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q17</span>
+          <span class="q-title"
+            >Trace output — requestTime middleware + POST /users — two
+            scenarios</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">
+              Scenario 1 — body has name
+            </div>
+            <div class="output">
+              <div class="out-line">Status: 201 Created</div>
+              <div class="out-line">
+                { "name": "Himanshu", "requestTime": "2026-05-17T..." }
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Scenario 2 — body is {}</div>
+            <div class="output">
+              <div class="out-line">Status: 400 Bad Request</div>
+              <div class="out-line">{ "error": "Name is required" }</div>
+              <div class="out-note">
+                req.requestTime still added by middleware but never sent — error
+                response sent instead
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Key insight</div>
+            <p class="note">
+              <strong>next(err)</strong> skips all normal middleware/routes and
+              jumps directly to error middleware. requestTime is added to req
+              but never used since error took over.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q18 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q18</span>
+          <span class="q-title"
+            >Find all bugs in Express login + users code</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-missing">All bugs found</div>
+            <div class="points">
+              <div class="pt warn">
+                Bug 1 — express.json missing () → req.body is undefined → crash
+                on destructure
+              </div>
+              <div class="pt warn">
+                Bug 2 — No return before res.status(200).json() → both 200 and
+                401 sent → "Cannot set headers after sent"
+              </div>
+              <div class="pt warn">
+                Bug 3 — Error handler has 3 params (err,req,res) → Express needs
+                4 params to recognize error middleware
+              </div>
+              <div class="pt warn">
+                Bug 4 — Hardcoded credentials — not production safe
+              </div>
+              <div class="pt warn">
+                Bug 5 — No validation for missing body fields
+              </div>
+              <div class="pt warn">
+                Bug 6 — No async error handling in routes
+              </div>
+              <div class="pt warn">
+                Bug 7 — console.log after res.json() — minor, technically ok but
+                bad practice
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q19 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q19</span>
+          <span class="q-title"
+            >Complete login + protected route system with JWT</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">Login route</div>
+            <pre>router.<span class="fn">post</span>(<span class="str">'/login'</span>, (req, res) => {
+  <span class="kw">const</span> { username, password } = req.body
+  <span class="kw">if</span> (!username || !password)
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ message: <span class="str">'Fields required'</span> })
+
+  <span class="kw">if</span> (username !== USER.username || password !== USER.password)
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ message: <span class="str">'Invalid credentials'</span> })
+
+  <span class="kw">const</span> token = jwt.<span class="fn">sign</span>(
+    { id: USER.id, username: USER.username },
+    process.env.JWT_SECRET,
+    { expiresIn: <span class="str">'1h'</span> }
+  )
+  res.<span class="fn">status</span>(<span class="num">200</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, token })
+})</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">Protected route</div>
+            <pre>router.<span class="fn">get</span>(<span class="str">'/profile'</span>, authMiddleware, (req, res) => {
+  res.<span class="fn">status</span>(<span class="num">200</span>).<span class="fn">json</span>({ success: <span class="kw">true</span>, user: req.user })
+})</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q20 -->
+      <div class="q-card" onclick="toggle(this)">
+        <div class="q-header">
+          <span class="q-num">Q20</span>
+          <span class="q-title"
+            >Handler A vs B — next() vs next(err) vs next('route') — async
+            bug</span
+          >
+          <span class="q-score-badge sh">10/10</span>
+          <span class="q-arrow">▶</span>
+        </div>
+        <div class="q-body">
+          <div class="section">
+            <div class="section-label sl-answer">
+              Part A — Express checks middleware.length
+            </div>
+            <pre><span class="cm">// Handler A — 3 params — treated as NORMAL middleware ❌</span>
+app.<span class="fn">use</span>((err, req, res) => { ... })
+<span class="cm">// Express checks: middleware.length === 4</span>
+<span class="cm">// 3 params → not recognized as error handler</span>
+
+<span class="cm">// Handler B — 4 params — recognized as error handler ✅</span>
+app.<span class="fn">use</span>((err, req, res, next) => { ... })</pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Part B — next() vs next(err) vs next('route')
+            </div>
+            <pre><span class="fn">next</span>()         <span class="cm">// → go to next middleware normally</span>
+<span class="fn">next</span>(err)      <span class="cm">// → skip everything, jump to error handler</span>
+<span class="fn">next</span>(<span class="str">'route'</span>)  <span class="cm">// → skip remaining handlers for THIS route,</span>
+               <span class="cm">//   go to next matching route definition</span>
+
+<span class="cm">// next('route') example:</span>
+app.<span class="fn">get</span>(<span class="str">'/user'</span>,
+  (req, res, next) => { <span class="fn">next</span>(<span class="str">'route'</span>) },  <span class="cm">// skipped</span>
+  (req, res) => { res.<span class="fn">send</span>(<span class="str">'First'</span>) }     <span class="cm">// skipped</span>
+)
+app.<span class="fn">get</span>(<span class="str">'/user'</span>, (req, res) => res.<span class="fn">send</span>(<span class="str">'Second'</span>)) <span class="cm">// runs!</span></pre>
+          </div>
+          <div class="section">
+            <div class="section-label sl-answer">
+              Part C — async error not caught in Express 4
+            </div>
+            <pre><span class="cm">// ❌ Bug — unhandled promise rejection in Express 4</span>
+app.<span class="fn">get</span>(<span class="str">'/data'</span>, <span class="kw">async</span> (req, res, next) => {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchFromDB</span>()  <span class="cm">// throws!</span>
+  <span class="cm">// error middleware never called — request hangs</span>
+})
+
+<span class="cm">// ✅ Fix — wrap in try/catch + next(err)</span>
+app.<span class="fn">get</span>(<span class="str">'/data'</span>, <span class="kw">async</span> (req, res, next) => {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">fetchFromDB</span>()
+    res.<span class="fn">json</span>(data)
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">next</span>(err)  <span class="cm">// passes to error middleware</span>
+  }
+})</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Round 4 summary -->
+      <div class="round-box">
+        <h3>Round 4 Summary</h3>
+        <div class="sg">
+          <div class="si">
+            <div class="si-topic">Middleware trace</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Bug finding</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">JWT full system</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+          <div class="si">
+            <div class="si-topic">Tricky theory</div>
+            <div class="si-score" style="color: var(--score-high)">10/10</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Final areas -->
+      <div class="round-box">
+        <h3>Day 2 — Weak vs Strong</h3>
+        <div class="areas">
+          <div class="area weak">
+            <h4>⚠ Revise These</h4>
+            <ul>
+              <li>req.params.id → always Number()</li>
+              <li>res.on('finish') for logger</li>
+              <li>CORS preflight — OPTIONS round trip</li>
+              <li>credentials: true in CORS config</li>
+              <li>asyncHandler wrapper pattern</li>
+              <li>res.status(204).end() for DELETE</li>
+              <li>const vs let for reassigned arrays</li>
+            </ul>
+          </div>
+          <div class="area strong">
+            <h4>✓ Strong Areas</h4>
+            <ul>
+              <li>Request-response cycle — perfect</li>
+              <li>Middleware chain — excellent</li>
+              <li>Error handling — senior level</li>
+              <li>JWT auth — production quality</li>
+              <li>Bug finding — outstanding (7 bugs!)</li>
+              <li>next() vs next(err) vs next('route')</li>
+              <li>Validation middleware — perfect</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        Day 2 Complete · 183/200 · 91% · Next: Day 3 — MongoDB + Mongoose
+      </footer>
+    </div>
+
+    <script>
+      function toggle(card) {
+        card.classList.toggle("open");
+      }
+    </script>
+  </body>
+</html>

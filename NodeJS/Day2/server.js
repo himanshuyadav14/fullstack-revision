@@ -1,2 +1,11 @@
-// Question 1:
-// What is Express.js? Why was it created? What does it give you that Node's built-in http module doesn't?
+const express = require("express");
+const app = express();
+const userRoutes = require("../routes/userRouter");
+
+app.use(express.json());
+
+app.use("/users", userRoutes);
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
+});
