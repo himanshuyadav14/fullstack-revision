@@ -23,3 +23,15 @@
 1782547778879: GET /signup Request Received
 1782547779563: GET /signup Request Received
 1782547894114: POST /signup Request Received
+
+
+
+
+
+4.18.2
+│ │  │
+│ │  └── PATCH
+│ └───── MINOR
+└──────── MAJOR
+
+carat ^4.18.2
