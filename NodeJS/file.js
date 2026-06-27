@@ -1,4 +1,6 @@
 // const fs = require("fs");
+const os = require("os");
+console.log(os.cpus().length);
 
 // Synchronous call
 // fs.writeFileSync("./sync.txt", "This is synchronous");
