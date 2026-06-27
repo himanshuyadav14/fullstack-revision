@@ -1,0 +1,179 @@
+# REST API Notes
+
+## What is REST?
+
+**REST (Representational State Transfer)** is an architectural style for designing web APIs. It is commonly implemented over HTTP and follows a set of principles that make APIs scalable, simple, and maintainable.
+
+---
+
+# REST Principles
+
+## 1. Client-Server Architecture
+
+* Client and server are independent of each other.
+* The client is responsible for the UI.
+* The server is responsible for business logic and data storage.
+
+**Example**
+
+```text
+React App  →  Node.js API  →  MongoDB
+```
+
+---
+
+## 2. Stateless
+
+Every request must contain all the information needed to process it.
+
+* The server does **not** store client session state between requests.
+* Authentication tokens (JWT/Bearer Token) are sent with every request.
+
+---
+
+## 3. Resource-Based URLs
+
+Resources should be represented using **nouns**, not verbs.
+
+✅ Good
+
+```text
+GET /users
+GET /users/1
+POST /users
+DELETE /users/1
+```
+
+❌ Bad
+
+```text
+/getUsers
+/createUser
+/deleteUser
+```
+
+---
+
+## 4. Use HTTP Methods Correctly
+
+| Method | Purpose                     |
+| ------ | --------------------------- |
+| GET    | Retrieve data               |
+| POST   | Create a resource           |
+| PUT    | Replace an entire resource  |
+| PATCH  | Partially update a resource |
+| DELETE | Remove a resource           |
+
+---
+
+## 5. Proper HTTP Status Codes
+
+| Status Code               | Meaning                        |
+| ------------------------- | ------------------------------ |
+| 200 OK                    | Request successful             |
+| 201 Created               | Resource created successfully  |
+| 204 No Content            | Success with no response body  |
+| 400 Bad Request           | Invalid client request         |
+| 401 Unauthorized          | Authentication required/failed |
+| 403 Forbidden             | Authenticated but not allowed  |
+| 404 Not Found             | Resource not found             |
+| 500 Internal Server Error | Server-side error              |
+
+---
+
+## 6. Uniform Interface
+
+API endpoints should follow a consistent structure.
+
+Example:
+
+```text
+/users
+/users/:id
+
+/products
+/products/:id
+```
+
+---
+
+## 7. Cacheable
+
+Responses should be cacheable whenever possible to improve performance.
+
+Example:
+
+```http
+Cache-Control: max-age=3600
+```
+
+---
+
+## 8. Layered System
+
+The client should not know whether it is communicating directly with the server or through intermediate layers.
+
+Example:
+
+```text
+Client
+   ↓
+Load Balancer
+   ↓
+API Gateway
+   ↓
+Backend Server
+   ↓
+Database
+```
+
+---
+
+# Example of a RESTful API
+
+```http
+GET    /users          // Get all users
+GET    /users/10       // Get a specific user
+
+POST   /users          // Create a new user
+
+PUT    /users/10       // Replace the entire user
+
+PATCH  /users/10       // Update specific fields
+
+DELETE /users/10       // Delete the user
+```
+
+---
+
+# REST API Best Practices
+
+* Use nouns instead of verbs in URLs.
+* Use the correct HTTP method.
+* Return meaningful HTTP status codes.
+* Keep endpoints consistent.
+* Make requests stateless.
+* Version your APIs (e.g., `/api/v1/users`).
+* Validate input before processing.
+* Return JSON responses consistently.
+
+---
+
+# Interview Definition
+
+> REST (Representational State Transfer) is an architectural style for designing web APIs. It follows principles such as client-server architecture, stateless communication, resource-based URLs, proper use of HTTP methods, meaningful HTTP status codes, cacheability, and a uniform interface to build scalable and maintainable APIs.
+
+---
+
+# Quick Revision
+
+* REST = Architectural Style (Not a Protocol)
+* Uses HTTP
+* Stateless Communication
+* Resource-Based URLs (Nouns)
+* Proper HTTP Methods
+* Proper HTTP Status Codes
+* Client-Server Architecture
+* Uniform Interface
+* Cacheable Responses
+* Layered System
