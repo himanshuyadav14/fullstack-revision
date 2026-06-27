@@ -34,4 +34,5 @@
 │ └───── MINOR
 └──────── MAJOR
 
-carat ^4.18.2
+carat ^ allows minor and patch updates
+tilda ~ allows patch updates
