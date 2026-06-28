@@ -1,8 +1,12 @@
 const express = require("express");
+const fs = require("fs");
 const users = require("./utils/MOCK_DATA.json");
 
 const app = express();
 const PORT = 3000;
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get("/users", (req, res) => {
   const html = `
@@ -35,8 +39,13 @@ app
   });
 
 app.post("/api/users", (req, res) => {
-  //TODO: create new user
-  res.json({ status: "pending" });
+  const user = req.body;
+  user.id = users.length + 1;
+  users.push(user);
+  fs.writeFile("./utils/MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+    if (err) throw err;
+    res.json({ status: "success", message: "User Created!!", id: user.id });
+  });
 });
 
 app.listen(PORT, () => {
