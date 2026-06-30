@@ -14,7 +14,7 @@ const generateShortUrl = async (req, res) => {
     redirectUrl,
     visitHistory: [],
   });
-  res.status(201).json({ status: "success", id: shortId });
+  res.status(201).render("home", { id: shortId });
 };
 
 const redirectToUrl = async (req, res) => {
@@ -37,12 +37,12 @@ const getAnalytics = async (req, res) => {
   if (!shortId) return res.status(400).json({ error: "Short ID is required" });
 
   const result = await Url.findOne({ shortId });
+  if (!result) return res.status(404).json({ error: "URL not found" });
   return res.json({
     totalClicks: result.visitHistory.length,
     analytics: result.visitHistory,
   });
 };
-
 module.exports = {
   generateShortUrl,
   redirectToUrl,

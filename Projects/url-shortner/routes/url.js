@@ -8,7 +8,7 @@ const {
 } = require("../controllers/url");
 
 router.post("/", generateShortUrl);
-router.get("/:id", redirectToUrl);
 router.get("/analytics/:id", getAnalytics);
+router.get("/:id", redirectToUrl);
 
 module.exports = router;
