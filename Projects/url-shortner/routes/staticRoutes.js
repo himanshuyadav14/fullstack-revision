@@ -4,8 +4,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   const urls = await Url.find({});
-  console.log(urls);
-  return res.render("home", { urls });
+  return res.render("home", { urls, id: req.query.id });
 });
 
 module.exports = router;

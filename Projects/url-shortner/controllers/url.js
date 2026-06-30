@@ -2,11 +2,15 @@ const { nanoid } = require("nanoid");
 const Url = require("../models/url");
 
 const generateShortUrl = async (req, res) => {
-  const redirectUrl = req.body.url;
-  if (!redirectUrl)
-    return res
-      .status(400)
-      .json({ status: "failed", message: "URL is Required!!" });
+  const urls = await Url.find({});
+  const redirectUrl = req.body.url?.trim();
+
+  if (!redirectUrl) {
+    return res.status(400).render("home", {
+      urls,
+      error: "URL is required",
+    });
+  }
 
   const shortId = nanoid(8);
   await Url.create({
@@ -14,7 +18,9 @@ const generateShortUrl = async (req, res) => {
     redirectUrl,
     visitHistory: [],
   });
-  res.status(201).render("home", { id: shortId });
+
+  const allUrls = await Url.find({});
+  return res.status(201).render("home", { id: shortId, urls: allUrls });
 };
 
 const redirectToUrl = async (req, res) => {

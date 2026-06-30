@@ -1,52 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>URL Shortener</title>
+    <style>
+      body {
+        font-family: tahoma;
+        margin: 20px;
+      }
 
-<head>
-  <style>
-    body {
-      font-family: tahoma;
-      margin: 20px;
-    }
+      h1 {
+        color: #333;
+      }
 
-    h1 {
-      color: #333;
-    }
-  </style>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Home Page</title>
-</head>
+      .error {
+        color: #b00020;
+      }
 
-<body>
-  <h1>URL Shortener</h1>
-  <% if(locals.id){ %>
-  <h2>Your Short URL is: <a href="http://localhost:3000/url/<%= id %>"><%= id %></a></h2>
-  <% } %>
-  <div>
-    <form method="POST" action="/url">
-      <label>Enter your original URL</label>
-      <input type="text" name="url" placeholder="https://example.com" />
-      <button type="submit">Generate</button>
-    </form>
-  </div>
-  <div> <% if(locals.urls) {%> <table>
+      table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width: 100%;
+        max-width: 900px;
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>URL Shortener</h1>
+
+    <% if (locals.id) { %>
+    <h2>
+      Your Short URL is:
+      <a href="/url/<%= id %>">http://localhost:3000/url/<%= id %></a>
+    </h2>
+    <% } %>
+
+    <% if (locals.error) { %>
+    <p class="error"><%= error %></p>
+    <% } %>
+
+    <div>
+      <form method="POST" action="/url">
+        <label for="url">Enter your original URL</label>
+        <input
+          type="url"
+          id="url"
+          name="url"
+          placeholder="https://example.com"
+          required
+        />
+        <button type="submit">Generate</button>
+      </form>
+    </div>
+
+    <% if (locals.urls && urls.length) { %>
+    <table>
       <thead>
+        <tr>
           <th>S. No</th>
           <th>Short ID</th>
           <th>Original URL</th>
           <th>Clicks</th>
+        </tr>
       </thead>
       <tbody>
         <% urls.forEach((url, index) => { %>
         <tr>
           <td><%= index + 1 %></td>
-          <td><%= url.shortId %></td>
+          <td>
+            <a href="/url/<%= url.shortId %>"><%= url.shortId %></a>
+          </td>
           <td><%= url.redirectUrl %></td>
           <td><%= url.visitHistory.length %></td>
         </tr>
         <% }) %>
       </tbody>
-    </table> <% } %> </div>
-</body>
-
+    </table>
+    <% } %>
+  </body>
 </html>
