@@ -10,6 +10,6 @@ const {
 
 router.post("/", authenticate, generateShortUrl);
 router.get("/analytics/:id", authenticate, getAnalytics);
-router.get("/:id", authenticate, redirectToUrl);
+router.get("/:id", redirectToUrl);
 
 module.exports = router;
