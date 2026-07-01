@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { authenticate } = require("../middlewares/auth.js");
 
 const {
   generateShortUrl,
@@ -7,8 +8,8 @@ const {
   getAnalytics,
 } = require("../controllers/url");
 
-router.post("/", generateShortUrl);
-router.get("/analytics/:id", getAnalytics);
-router.get("/:id", redirectToUrl);
+router.post("/", authenticate, generateShortUrl);
+router.get("/analytics/:id", authenticate, getAnalytics);
+router.get("/:id", authenticate, redirectToUrl);
 
 module.exports = router;

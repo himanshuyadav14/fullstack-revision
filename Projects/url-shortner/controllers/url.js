@@ -17,6 +17,7 @@ const generateShortUrl = async (req, res) => {
     shortId,
     redirectUrl,
     visitHistory: [],
+    createdBy: req.userId,
   });
 
   const allUrls = await Url.find({});
