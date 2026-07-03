@@ -67,6 +67,7 @@ const getAllUrls = async (req, res) => {
     .sort({ createdAt: -1 });
   return res.render("admin", { urls });
 };
+
 module.exports = {
   generateShortUrl,
   redirectToUrl,
