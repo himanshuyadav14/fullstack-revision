@@ -20,7 +20,9 @@ app.set("views", path.resolve("./views"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
+
 app.use("/url", urlRoutes);
 app.use("/", staticRoutes);
 app.use("/user", userRoutes);
+
 app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));

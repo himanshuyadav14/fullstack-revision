@@ -1,16 +1,30 @@
 const User = require("../models/user");
-const { v4: uuidv4 } = require("uuid");
+const { generateToken } = require("../service/auth");
 
-const { addUserToSession } = require("../service/auth");
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 const handleUserSignup = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.render("signup", { error: "All fields are required" });
   }
-
-  const user = await User.create({ name, email, password });
-  res.redirect("/");
+  try {
+    const user = await User.create({ name, email, password });
+    const token = generateToken(user);
+    res.cookie("token", token, cookieOptions);
+    res.redirect("/");
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.render("signup", { error: "Email is already registered" });
+    }
+    return res.render("signup", {
+      error: "Something went wrong, Please Try again later.",
+    });
+  }
 };
 
 const handleUserLogin = async (req, res) => {
@@ -19,10 +33,15 @@ const handleUserLogin = async (req, res) => {
   if (!user) {
     return res.render("login", { error: "User not found" });
   }
-  const sessionId = uuidv4();
-  addUserToSession(sessionId, user._id.toString());
-  res.cookie("uid", sessionId);
+
+  const token = generateToken(user);
+  res.cookie("token", token, cookieOptions);
   res.redirect("/");
 };
 
-module.exports = { handleUserSignup, handleUserLogin };
+const handleUserLogout = (req, res) => {
+  res.clearCookie("token");
+  return res.redirect("/login");
+};
+
+module.exports = { handleUserSignup, handleUserLogin, handleUserLogout };

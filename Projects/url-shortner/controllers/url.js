@@ -2,14 +2,10 @@ const { nanoid } = require("nanoid");
 const Url = require("../models/url");
 
 const generateShortUrl = async (req, res) => {
-  const urls = await Url.find({ createdBy: req.userId });
   const redirectUrl = req.body.url?.trim();
 
   if (!redirectUrl) {
-    return res.status(400).render("home", {
-      urls,
-      error: "URL is required",
-    });
+    return res.redirect("/?error=URL+is+required");
   }
 
   const shortId = nanoid(8);
@@ -20,8 +16,7 @@ const generateShortUrl = async (req, res) => {
     createdBy: req.userId,
   });
 
-  const allUrls = await Url.find({ createdBy: req.userId });
-  return res.status(201).render("home", { id: shortId, urls: allUrls });
+  return res.redirect(`/?id=${shortId}`);
 };
 
 const redirectToUrl = async (req, res) => {

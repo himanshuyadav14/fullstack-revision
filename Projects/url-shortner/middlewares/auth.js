@@ -1,14 +1,16 @@
-const { getUserFromSession } = require("../service/auth.js");
-async function authenticate(req, res, next) {
-  const sessionId = req.cookies?.uid;
-  if (!sessionId) {
+const { verifyToken } = require("../service/auth.js");
+function authenticate(req, res, next) {
+  const token = req.cookies?.token;
+  if (!token) {
     return res.redirect("/login");
   }
-  const userId = getUserFromSession(sessionId);
-  if (!userId) {
+
+  const payload = verifyToken(token);
+  if (!payload) {
+    res.clearCookie("token");
     return res.redirect("/login");
   }
-  req.userId = userId;
+  req.userId = payload.userId;
   next();
 }
 

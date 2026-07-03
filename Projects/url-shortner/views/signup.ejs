@@ -13,7 +13,7 @@
       h1 {
         color: #333;
       }
-
+      .error { color: #b00020; }
       /* form {
         display: flex;
         flex-direction: column;
@@ -31,5 +31,9 @@
       <input type="password" name="password" placeholder="Password" />
       <button type="submit">Signup</button>
     </form>
+
+    <% if (locals.error) { %>
+      <p class="error"><%= error %></p>
+      <% } %>
   </body>
 </html>
