@@ -11,6 +11,7 @@ function authenticate(req, res, next) {
     return res.redirect("/login");
   }
   req.userId = payload.userId;
+  req.role = payload.role || "user";
   next();
 }
 

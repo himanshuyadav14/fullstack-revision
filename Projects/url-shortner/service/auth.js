@@ -3,7 +3,11 @@ const JWT_SECRET = "dev-secret-himanshu-url-shortner-123";
 
 const generateToken = (user) => {
   return jwt.sign(
-    { userId: user._id.toString(), email: user.email },
+    {
+      userId: user._id.toString(),
+      email: user.email,
+      role: user.role || "user",
+    },
     JWT_SECRET,
     {
       expiresIn: "7d",

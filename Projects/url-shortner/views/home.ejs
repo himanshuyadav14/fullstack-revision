@@ -18,6 +18,10 @@
         color: #b00020;
       }
 
+      .success {
+        color: #1b5e20;
+      }
+
       table {
         border-collapse: collapse;
         margin-top: 20px;
@@ -37,6 +41,10 @@
   <body>
     <h1>URL Shortener</h1>
 
+    <% if (locals.role === "admin") { %>
+    <p><a href="/admin/urls">Admin Dashboard</a></p>
+    <% } %>
+
     <% if (locals.id) { %>
     <h2>
       Your Short URL is:
@@ -48,10 +56,14 @@
     <p class="error"><%= error %></p>
     <% } %>
 
+    <% if (locals.success) { %>
+    <p class="success"><%= success %></p>
+    <% } %>
+
     <div>
-    <form action="/user/logout" method="post">
-  <button type="submit">Logout</button>
-</form>
+      <form action="/user/logout" method="post">
+        <button type="submit">Logout</button>
+      </form>
       <form method="POST" action="/url">
         <label for="url">Enter your original URL</label>
         <input
@@ -73,6 +85,7 @@
           <th>Short ID</th>
           <th>Original URL</th>
           <th>Clicks</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -84,6 +97,11 @@
           </td>
           <td><%= url.redirectUrl %></td>
           <td><%= url.visitHistory.length %></td>
+          <td>
+            <form method="POST" action="/url/<%= url.shortId %>/delete">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
         </tr>
         <% }) %>
       </tbody>

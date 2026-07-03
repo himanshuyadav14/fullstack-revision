@@ -45,8 +45,32 @@ const getAnalytics = async (req, res) => {
     analytics: result.visitHistory,
   });
 };
+
+const deleteUrl = async (req, res) => {
+  const { shortId } = req.params;
+
+  const deleted = await Url.findOneAndDelete({
+    shortId,
+    createdBy: req.userId, // ← Authorization: sirf owner
+  });
+
+  if (!deleted) {
+    return res.redirect("/?error=URL+not+found+or+not+allowed");
+  }
+
+  return res.redirect("/?success=URL+deleted");
+};
+
+const getAllUrls = async (req, res) => {
+  const urls = await Url.find({})
+    .populate("createdBy", "name email")
+    .sort({ createdAt: -1 });
+  return res.render("admin", { urls });
+};
 module.exports = {
   generateShortUrl,
   redirectToUrl,
   getAnalytics,
+  deleteUrl,
+  getAllUrls,
 };
