@@ -4,9 +4,10 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const { checkForAuthenticationCookie } = require("./middlewares/auth");
 const Blog = require("./models/blog");
+require("dotenv").config();
 
 mongoose
-  .connect("mongodb://localhost:27017/blogify")
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to MongoDB");
   })
@@ -16,8 +17,9 @@ mongoose
 
 const userRoutes = require("./routes/user");
 const blogRoutes = require("./routes/blog");
+
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.resolve("./public")));
