@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("partials/header") %>
+    <link rel="stylesheet" href="/css/home.css" />
+    <title><%= locals.blog ? blog.title + " | Blogify" : "Blog not found | Blogify" %></title>
+  </head>
+  <body>
+    <%- include("partials/nav") %>
+
+    <main class="container py-4">
+      <a href="/" class="back-link">&larr; Back to home</a>
+
+      <% if (locals.error) { %>
+      <div class="blog-not-found">
+        <h1>Blog not found</h1>
+        <p>The post you are looking for does not exist or was removed.</p>
+        <a href="/" class="btn btn-primary">Go to homepage</a>
+      </div>
+      <% } else { %>
+      <article class="blog-detail">
+        <img
+          src="/<%= blog.coverImageUrl %>"
+          alt="<%= blog.title %> cover"
+          class="blog-detail-cover"
+          onerror="this.src='/images/user.png'"
+        />
+        <div class="blog-detail-content">
+          <h1 class="blog-detail-title"><%= blog.title %></h1>
+          <div class="blog-detail-meta">
+            <div class="blog-author">
+              <img
+                src="<%= blog.createdBy?.profileImageUrl || '/images/user.png' %>"
+                alt="<%= blog.createdBy?.fullName || 'Author' %>"
+              />
+              <span><%= blog.createdBy?.fullName || "Unknown author" %></span>
+            </div>
+            <time datetime="<%= blog.createdAt %>">
+              <%= new Date(blog.createdAt).toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              }) %>
+            </time>
+          </div>
+          <div class="blog-detail-body"><%= blog.body %></div>
+        </div>
+      </article>
+      <% } %>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">&copy; <%= new Date().getFullYear() %> Blogify</div>
+    </footer>
+
+    <%- include("partials/scripts") %>
+  </body>
+</html>
