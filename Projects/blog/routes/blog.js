@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Blog = require("../models/blog");
+const Comment = require("../models/comment");
 const multer = require("multer");
 const path = require("path");
 
@@ -20,6 +21,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 router.get("/add-blog", (req, res) => {
+  if (!req.user) {
+    return res.redirect("/user/signin");
+  }
   return res.render("addBlog", { user: req.user });
 });
 
@@ -36,11 +40,46 @@ router.get("/:id", async (req, res) => {
     });
   }
 
-  return res.render("blogDetail", { user: req.user, blog });
+  const comments = await Comment.find({ blog: req.params.id })
+    .populate("createdBy", "fullName profileImageUrl")
+    .sort({ createdAt: -1 });
+
+  return res.render("blogDetail", { user: req.user, blog, comments });
+});
+
+router.post("/:id/comment", async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/user/signin");
+  }
+
+  const { content } = req.body;
+  if (!content?.trim()) {
+    return res.redirect(`/blog/${req.params.id}`);
+  }
+
+  await Comment.create({
+    content: content.trim(),
+    blog: req.params.id,
+    createdBy: req.user.id,
+  });
+
+  return res.redirect(`/blog/${req.params.id}#comments`);
 });
 
 router.post("/add-blog", upload.single("coverImage"), async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/user/signin");
+  }
+
   const { title, body } = req.body;
+
+  if (!req.file) {
+    return res.render("addBlog", {
+      user: req.user,
+      error: "Please upload a cover image.",
+    });
+  }
+
   try {
     const blog = await Blog.create({
       title,

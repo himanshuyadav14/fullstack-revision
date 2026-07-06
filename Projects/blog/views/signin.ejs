@@ -2,45 +2,57 @@
 <html lang="en">
   <head>
     <%- include("partials/header") %>
-    <title>Signup</title>
+    <link rel="stylesheet" href="/css/auth.css" />
+    <title>Sign in | Blogify</title>
   </head>
   <body>
-   
     <%- include("partials/nav") %>
-    <% if (locals.error) { %>
-        <div class="container m-5"> 
-            <div class="alert alert-danger" role="alert">
-                <%= error %>
-              </div>
 
-        </div>
-        
-      <% } %>
-    <form class="m-5" action="/user/signin" method="post">
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input
-          type="email"
-          class="form-control"
-          id="email"
-          aria-describedby="emailHelp"
-          name="email"
-        />
-        <div id="emailHelp" class="form-text">
-          We'll never share your email with anyone else.
-        </div>
+    <main class="auth-page">
+      <div class="auth-card">
+        <div class="auth-badge">B</div>
+        <h1 class="auth-title">Welcome back</h1>
+        <p class="auth-subtitle">Sign in to continue reading and writing on Blogify.</p>
+
+        <% if (locals.error) { %>
+        <div class="auth-alert" role="alert"><%= error %></div>
+        <% } %>
+
+        <form class="auth-form" action="/user/signin" method="post">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn site-btn-primary auth-submit">
+            Sign in
+          </button>
+        </form>
+
+        <p class="auth-footer">
+          Don't have an account?
+          <a href="/user/signup">Create one</a>
+        </p>
       </div>
-      <div class="mb-3">
-        <label for="password" class="form-label">Password</label>
-        <input
-          type="password"
-          class="form-control"
-          id="password"
-          name="password"
-        />
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    </main>
+
     <%- include("partials/scripts") %>
   </body>
 </html>

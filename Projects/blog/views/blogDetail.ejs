@@ -46,6 +46,66 @@
           <div class="blog-detail-body"><%= blog.body %></div>
         </div>
       </article>
+
+      <section class="comments-section" id="comments">
+        <div class="comments-header">
+          <h2>Comments</h2>
+          <span class="comments-count"><%= comments.length %></span>
+        </div>
+
+        <% if (locals.user) { %>
+        <form
+          class="comment-form"
+          action="/blog/<%= blog._id %>/comment"
+          method="post"
+        >
+          <label for="content" class="form-label fw-semibold">Add a comment</label>
+          <textarea
+            class="form-control comment-textarea"
+            id="content"
+            name="content"
+            rows="3"
+            placeholder="Share your thoughts..."
+            required
+          ></textarea>
+          <button type="submit" class="btn site-btn-primary mt-3">Post comment</button>
+        </form>
+        <% } else { %>
+        <div class="comment-signin-prompt">
+          <p>Sign in to join the conversation.</p>
+          <a href="/user/signin" class="btn site-btn-primary btn-sm">Sign in</a>
+        </div>
+        <% } %>
+
+        <div class="comments-list">
+          <% if (comments.length === 0) { %>
+          <p class="comments-empty">No comments yet. Be the first to comment!</p>
+          <% } else { %>
+          <% comments.forEach((comment) => { %>
+          <article class="comment-card">
+            <img
+              src="<%= comment.createdBy?.profileImageUrl || '/images/user.png' %>"
+              alt="<%= comment.createdBy?.fullName || 'User' %>"
+              class="comment-avatar"
+            />
+            <div class="comment-body">
+              <div class="comment-meta">
+                <strong><%= comment.createdBy?.fullName || "Unknown user" %></strong>
+                <time datetime="<%= comment.createdAt %>">
+                  <%= new Date(comment.createdAt).toLocaleDateString("en-IN", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }) %>
+                </time>
+              </div>
+              <p class="comment-content"><%= comment.content %></p>
+            </div>
+          </article>
+          <% }); %>
+          <% } %>
+        </div>
+      </section>
       <% } %>
     </main>
 

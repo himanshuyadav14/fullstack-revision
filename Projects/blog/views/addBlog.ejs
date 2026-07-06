@@ -2,39 +2,108 @@
 <html lang="en">
   <head>
     <%- include("partials/header") %>
-    <title>Add Blog</title>
+    <link rel="stylesheet" href="/css/home.css" />
+    <link rel="stylesheet" href="/css/auth.css" />
+    <title>Write a blog | Blogify</title>
   </head>
   <body>
     <%- include("partials/nav") %>
-    <div class="container mt-3">
-      <form action="/blog/add-blog" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="coverImageUrl">Cover Image URL</label>
-          <input
-            type="file"
-            class="form-control"
-            id="coverImage"
-            name="coverImage"
-          />
-        </div>
-        <div class="form-group">
-          <label for="title">Title</label>
-          <input type="text" class="form-control" id="title" name="title" />
-        </div>
-        <div class="form-group">
-          <label for="body">Body</label>
-          <textarea
-            class="form-control"
-            id="body"
-            name="body"
-            rows="3"
-          ></textarea>
-        </div>
 
-        <button type="submit" class="btn btn-primary mt-3">Add Blog</button>
-      </form>
-    </div>
+    <main class="add-blog-page">
+      <div class="container">
+        <a href="/" class="back-link">&larr; Back to home</a>
+
+        <div class="add-blog-card">
+          <div class="add-blog-header">
+            <h1 class="auth-title">Write a new blog</h1>
+            <p class="auth-subtitle mb-0">
+              Share your story with a cover image, title, and content.
+            </p>
+          </div>
+
+          <% if (locals.error) { %>
+          <div class="auth-alert" role="alert"><%= error %></div>
+          <% } %>
+
+          <form
+            class="auth-form add-blog-form"
+            action="/blog/add-blog"
+            method="post"
+            enctype="multipart/form-data"
+          >
+            <div class="mb-3">
+              <label for="coverImage" class="form-label">Cover image</label>
+              <div class="file-upload-box">
+                <input
+                  type="file"
+                  class="form-control file-input"
+                  id="coverImage"
+                  name="coverImage"
+                  accept="image/*"
+                  required
+                />
+                <p class="file-upload-hint">PNG, JPG or WEBP recommended</p>
+              </div>
+              <img
+                id="coverPreview"
+                class="cover-preview d-none"
+                alt="Cover preview"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Title</label>
+              <input
+                type="text"
+                class="form-control"
+                id="title"
+                name="title"
+                placeholder="Give your blog a catchy title"
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label for="body" class="form-label">Content</label>
+              <textarea
+                class="form-control blog-body-input"
+                id="body"
+                name="body"
+                rows="10"
+                placeholder="Write your blog content here..."
+                required
+              ></textarea>
+            </div>
+
+            <div class="add-blog-actions">
+              <a href="/" class="btn btn-outline-secondary">Cancel</a>
+              <button type="submit" class="btn site-btn-primary">Publish blog</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">&copy; <%= new Date().getFullYear() %> Blogify</div>
+    </footer>
 
     <%- include("partials/scripts") %>
+    <script>
+      const coverInput = document.getElementById("coverImage");
+      const coverPreview = document.getElementById("coverPreview");
+
+      coverInput.addEventListener("change", () => {
+        const file = coverInput.files?.[0];
+        if (!file) {
+          coverPreview.classList.add("d-none");
+          coverPreview.removeAttribute("src");
+          return;
+        }
+
+        coverPreview.src = URL.createObjectURL(file);
+        coverPreview.classList.remove("d-none");
+      });
+    </script>
   </body>
 </html>
